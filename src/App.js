@@ -4,6 +4,7 @@ import { SearchLocation } from '@styled-icons/fa-solid';
 import { AutocompleteList } from './AutocompleteList';
 import { data } from './CountryCodes';
 import Map from './map';
+import ReactGA from 'react-ga';
 
 const HomeWrapper = styled.div``;
 
@@ -142,24 +143,11 @@ function App() {
 	const [navigationIndex, setNavigationIndex] = useState(0);
 	const [results, setResults] = useState();
 
-	const info = {
-		IRL: {
-			fillKey: 'MEDIUM',
-			year: 2002,
-		},
-		USA: {
-			fillKey: 'MEDIUM',
-			year: 2002,
-		},
-		ESP: {
-			fillKey: 'MEDIUM',
-			year: 2002,
-		},
-		FRA: {
-			fillKey: 'MEDIUM',
-			year: 2002,
-		},
-	};
+	useEffect(() => {
+		const trackingId = 'UA-172521898-1'; // Replace with your Google Analytics tracking ID
+		ReactGA.initialize(trackingId);
+		ReactGA.pageview('/');
+	}, []);
 
 	const handleInput = (e) => {
 		const { value } = e.target;
