@@ -3,15 +3,15 @@ import styled from 'styled-components';
 
 const AutocompleteListWrapper = styled.div`
 	position: absolute;
-	padding-left: 1em;
-	padding-right: 1em;
-	left: 41%;
 	background: antiquewhite;
 	font-size: 20px;
-	width: 9em;
+	width: 80%;
+	padding: 0 10%;
 	text-align: center;
-	z-index: 99999;
 	border-radius: 5px 5px 5px 5px;
+	top: 0px;
+	transform: translate(0px, 40px);
+	z-index: 9999;
 `;
 
 const AutocompleteWord = styled.div`
@@ -26,6 +26,9 @@ const AutocompleteWord = styled.div`
 		cursor: pointer;
 		color: palevioletred;
 		background-color: #fdf5ea;
+	}
+	&#last  {
+		border-bottom: none;
 	}
 `;
 
@@ -42,6 +45,7 @@ export const AutocompleteList = ({
 							<AutocompleteWord
 								key={`${suggestionList[item].name}+${index}`}
 								onClick={() => handleSuggestion(index)}
+								id={index === suggestionList.length - 1 ? 'last' : null}
 								className={navigationIndex === index ? 'active' : null}>
 								{suggestionList[item].name}
 							</AutocompleteWord>

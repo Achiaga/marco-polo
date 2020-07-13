@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
-import Datamap from 'datamaps';
 import { AutocompleteList } from './AutocompleteList';
 import { data } from './CountryCodes';
+import Map from './map';
 
 const HomeWrapper = styled.div``;
 
@@ -17,7 +17,11 @@ const Title = styled.h1`
 	font-family: 'Fredericka the Great', cursive;
 `;
 
-const AutocompleteBox = styled.div``;
+const AutocompleteBox = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
 
 const AutocompleteInput = styled.div`
 	display: flex;
@@ -52,72 +56,91 @@ const SearchIcon = styled(SearchLocation)`
 		background-color: #da537f;
 		color: white;
 	}
+	position: absolute;
+	right: -40px;
 `;
 
-const mapsFunctions = (countryCode) => {
-	const oldMap = document.getElementById('container');
-	const svgChild = oldMap.getElementsByTagName('svg');
-	if (svgChild[0]) {
-		oldMap.removeChild(svgChild[0]);
+const DoneButton = styled.button`
+	width: 6em;
+	border: 2px solid palevioletred;
+	border-radius: 6px;
+	padding: 7px;
+	background-color: white;
+	color: palevioletred;
+	margin: auto;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	display: flex;
+	justify-content: center;
+	font-size: 20px;
+	font-weight: 700;
+	&:hover {
+		cursor: pointer;
+		background-color: #da537f;
+		color: white;
 	}
-	new Datamap({
-		element: document.getElementById('container'),
-		fills: {
-			HIGH: '#f4acb7',
-			LOW: '#f4acb7',
-			MEDIUM: '#f4acb7',
-			UNKNOWN: '#f4acb7',
-			defaultFill: '#d8e2dc',
-		},
-		data: countryCode,
-		geographyConfig: {
-			highlightFillColor: '#f6bd60',
-			highlightBorderColor: '#f7ede2',
-			popupTemplate: function (geo, data) {
-				return [
-					'<div class="hoverinfo"><strong>',
-					'YEAR : ' + data.year,
-					'</strong></div>',
-				].join('');
-			},
-		},
-	});
-};
+`;
 
-function useWindowSize() {
-	const isClient = typeof window === 'object';
+const DoneButtonDisabled = styled.div`
+	width: 6em;
+	height: 3em;
+	margin-top: 2em;
+	margin-bottom: 2em;
+`;
 
-	function getSize() {
-		return {
-			width: isClient ? window.innerWidth : undefined,
-			height: isClient ? window.innerHeight : undefined,
-		};
+const ResultsCard = styled.div`
+	width: 30em;
+	margin: auto;
+	position: relative;
+	height: auto;
+	padding: 0.7em 0.3em;
+	background-color: #faebd7;
+	color: palevioletred;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	font-size: 25px;
+	font-weight: 500;
+`;
+
+const ButtonAdvancedResults = styled.button`
+	position: absolute;
+	right: -8em;
+	width: 6em;
+	border: 2px solid palevioletred;
+	border-radius: 6px;
+	padding: 7px;
+	background-color: white;
+	color: palevioletred;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	font-size: 20px;
+	font-weight: 700;
+	&:hover {
+		cursor: pointer;
+		background-color: #f4acb7;
+		color: white;
 	}
+`;
 
-	const [windowSize, setWindowSize] = useState(getSize);
-
-	useEffect(() => {
-		if (!isClient) {
-			return false;
-		}
-
-		function handleResize() {
-			setWindowSize(getSize());
-		}
-
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []); // Empty array ensures that effect is only run on mount and unmount
-
-	return windowSize;
-}
+const Bold = styled.p`
+	display: contents;
+	color: palevioletred;
+	font-size: 27px;
+	font-weight: 700;
+	&:hover {
+		color: #f6bd60;
+	}
+`;
 
 function App() {
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
 	const [countryCode, setCountryCode] = useState({});
-	const [navigationIndex, setNavigationIndex] = useState(-1);
-	const size = useWindowSize();
+	const [navigationIndex, setNavigationIndex] = useState(0);
+	const [results, setResults] = useState();
 
 	const info = {
 		IRL: {
@@ -138,58 +161,10 @@ function App() {
 		},
 	};
 
-	console.log(info);
-	console.log(countryCode);
-
-	useEffect(() => {
-		mapsFunctions(countryCode);
-	}, [countryCode]);
-
-	useEffect(() => {
-		mapsFunctions(countryCode);
-	}, [size.width]);
-
 	const handleInput = (e) => {
 		const { value } = e.target;
 		setInputValue(value);
 		handleAutocomplete(value);
-	};
-
-	const handleKeyPress = (e) => {
-		let cont;
-		if (e.keyCode == 40) {
-			cont = navigationIndex;
-			cont++;
-			setNavigationIndex(cont);
-		}
-		if (e.keyCode == 38) {
-			cont = navigationIndex;
-			cont--;
-			setNavigationIndex(cont);
-		}
-		if (e.keyCode == 13 && navigationIndex > -1) {
-			suggestionList[navigationIndex].alpha3 = suggestionList[
-				navigationIndex
-			].alpha3.toUpperCase();
-			setCountryCode({
-				...countryCode,
-				[suggestionList[navigationIndex].alpha3]: { fillKey: 'MEDIUM' },
-			});
-			setSuggestionList([]);
-			setNavigationIndex(-1);
-			setInputValue('');
-		}
-	};
-
-	const handleClick = (e) => {
-		console.log('click', inputValue);
-	};
-
-	const handleSuggestion = (index) => {
-		setCountryCode(suggestionList[index]);
-		setSuggestionList([]);
-		setNavigationIndex(-1);
-		setInputValue('');
 	};
 
 	const handleAutocomplete = (value) => {
@@ -205,33 +180,131 @@ function App() {
 		}
 	};
 
+	const setColorMap = (name, index) => {
+		name[index].alpha3 = name[index].alpha3.toUpperCase();
+		setCountryCode({
+			...countryCode,
+			[name[index].alpha3]: { fillKey: 'MEDIUM' },
+		});
+		setSuggestionList([]);
+		setNavigationIndex(0);
+		setInputValue('');
+	};
+
+	const handleKeyPress = (e) => {
+		let cont;
+		if (suggestionList.length > 0) {
+			if (e.keyCode == 40) {
+				if (navigationIndex < suggestionList.length - 1) {
+					cont = navigationIndex;
+					cont++;
+					setNavigationIndex(cont);
+				}
+			}
+			if (e.keyCode == 38) {
+				if (navigationIndex > 0) {
+					cont = navigationIndex;
+					cont--;
+					setNavigationIndex(cont);
+				}
+			}
+			if (e.keyCode == 13) {
+				if (navigationIndex > -1) {
+					setColorMap(suggestionList, navigationIndex);
+				} else if (suggestionList.length === 1) {
+					setColorMap(suggestionList, 0);
+				}
+			}
+		} else {
+			setNavigationIndex(0);
+		}
+	};
+
+	const handleClick = (e) => {
+		if (suggestionList) {
+			setColorMap(suggestionList, 0);
+		}
+	};
+
+	const handleSuggestion = (index) => {
+		setColorMap(suggestionList, index);
+	};
+
+	const handleClickCountry = (country) => {
+		let countryMatch = data.filter((word) => {
+			if (word.name.toLowerCase().includes(country.toLowerCase())) {
+				console.log(word);
+				if (word) {
+					return word;
+				}
+			}
+		});
+		setColorMap(countryMatch, 0);
+	};
+
+	const handleResults = () => {
+		let calc = Object.keys(countryCode).length / 1.95;
+		calc = calc.toFixed(1);
+		setResults(calc + '%');
+	};
+
+	const ResultsBox = () => {
+		let averageCountryTraveled = 5.29;
+		let userCountrytraveled = Object.keys(countryCode).length;
+		let countryRate = userCountrytraveled / averageCountryTraveled;
+		countryRate = countryRate.toFixed(1);
+		let travelerRank = '';
+
+		if (results) {
+			if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
+			if (userCountrytraveled > 2 && userCountrytraveled <= 5)
+				travelerRank = 'Young Scout 🐿 ';
+			if (userCountrytraveled > 5 && userCountrytraveled <= 10)
+				travelerRank = 'Adventurous 🧑‍🚀 🚀 ';
+			if (userCountrytraveled > 10) travelerRank = 'Phileas Fogg  🌍 🛸 ';
+		}
+
+		return (
+			<ResultsCard>
+				You have explored <Bold>{results}</Bold> of the world!{' '}
+				<Bold> 🎊 🎉</Bold> ({userCountrytraveled} countries)
+				<br />
+				<br /> You earn the rank of <Bold>{travelerRank}!</Bold> <br />
+				<br /> You travel <Bold>{countryRate}</Bold> times the average
+				<br />
+				<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
+			</ResultsCard>
+		);
+	};
+
 	return (
 		<HomeWrapper>
 			<Title>MARCO POLO</Title>
-			<AutocompleteBox>
-				<AutocompleteInput>
-					<Autocomplete
-						value={inputValue}
-						onChange={handleInput}
-						onKeyDown={handleKeyPress}
-					/>
-					<SearchIcon onClick={handleClick} />
-				</AutocompleteInput>
-				<AutocompleteList
-					suggestionList={suggestionList}
-					handleSuggestion={handleSuggestion}
-					navigationIndex={navigationIndex}
-				/>
-			</AutocompleteBox>
-			<div
-				id='container'
-				style={{
-					margin: 'auto',
-					position: 'relative',
-					width: size.width,
-					height: size.height,
-				}}
-			/>
+			{!results ? (
+				<AutocompleteBox>
+					<AutocompleteInput>
+						<Autocomplete
+							value={inputValue}
+							onChange={handleInput}
+							onKeyDown={handleKeyPress}
+						/>
+						<SearchIcon onClick={handleClick} />
+						<AutocompleteList
+							suggestionList={suggestionList}
+							handleSuggestion={handleSuggestion}
+							navigationIndex={navigationIndex}
+						/>
+					</AutocompleteInput>
+				</AutocompleteBox>
+			) : null}
+			{results ? (
+				<ResultsBox />
+			) : Object.keys(countryCode).length !== 0 ? (
+				<DoneButton onClick={handleResults}>Results</DoneButton>
+			) : (
+				<DoneButtonDisabled />
+			)}
+			<Map countryCode={countryCode} handleClickCountry={handleClickCountry} />
 		</HomeWrapper>
 	);
 }
