@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
 import { AutocompleteList } from './AutocompleteList';
 import { data } from './CountryCodes';
-import Map from './map';
 import ReactGA from 'react-ga';
+
+const Map = React.lazy(() => import('./map'));
 
 const HomeWrapper = styled.div``;
 
@@ -61,32 +62,8 @@ const SearchIcon = styled(SearchLocation)`
 	right: -40px;
 `;
 
-const DoneButton = styled.button`
-	width: 6em;
-	border: 2px solid palevioletred;
-	border-radius: 6px;
-	padding: 7px;
-	background-color: white;
-	color: palevioletred;
-	margin: auto;
-	margin-top: 2em;
-	margin-bottom: 2em;
-	display: flex;
-	justify-content: center;
-	font-size: 20px;
-	font-weight: 700;
-	&:hover {
-		cursor: pointer;
-		background-color: #da537f;
-		color: white;
-	}
-`;
-
 const DoneButtonDisabled = styled.div`
-	width: 6em;
-	height: 3em;
-	margin-top: 2em;
-	margin-bottom: 2em;
+    height: 10em;
 `;
 
 const ResultsCard = styled.div`
@@ -102,27 +79,31 @@ const ResultsCard = styled.div`
 	display: flex;
 	justify-content: center;
 	text-align: center;
-	font-size: 25px;
+	font-size: 20px;
 	font-weight: 500;
 `;
 
-const ButtonAdvancedResults = styled.button`
+const AdvancedOptions = styled.div`
 	position: absolute;
 	right: -8em;
+	top: 0;
+	display: inline-grid;
+    align-items: center;
+`;
+
+const ButtonAdvancedResults = styled.button`
+    margin-top: 5px;
+    margin-bottom: 5px;
 	width: 6em;
 	border: 2px solid palevioletred;
 	border-radius: 6px;
 	padding: 7px;
 	background-color: white;
 	color: palevioletred;
-	margin-top: 2em;
-	margin-bottom: 2em;
 	font-size: 20px;
 	font-weight: 700;
-	&:hover {
-		cursor: pointer;
-		background-color: #f4acb7;
-		color: white;
+	&:hover{
+		cursor: pointer
 	}
 `;
 
@@ -177,6 +158,9 @@ function App() {
 		setSuggestionList([]);
 		setNavigationIndex(0);
 		setInputValue('');
+		let calc = Object.keys(countryCode).length / 1.95;
+		calc = calc.toFixed(1);
+		setResults(calc + '%');
 	};
 
 	const handleKeyPress = (e) => {
@@ -230,18 +214,13 @@ function App() {
 		setColorMap(countryMatch, 0);
 	};
 
-	const handleResults = () => {
-		let calc = Object.keys(countryCode).length / 1.95;
-		calc = calc.toFixed(1);
-		setResults(calc + '%');
-	};
-
 	const ResultsBox = () => {
 		let averageCountryTraveled = 5.29;
 		let userCountrytraveled = Object.keys(countryCode).length;
 		let countryRate = userCountrytraveled / averageCountryTraveled;
 		countryRate = countryRate.toFixed(1);
 		let travelerRank = '';
+
 
 		if (results) {
 			if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
@@ -260,39 +239,47 @@ function App() {
 				<br /> You earn the rank of <Bold>{travelerRank}!</Bold> <br />
 				<br /> You travel <Bold>{countryRate}</Bold> times the average
 				<br />
-				<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
+				<AdvancedOptions>
+					<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
+					<ButtonAdvancedResults>Share it</ButtonAdvancedResults>
+					<ButtonAdvancedResults>Reset</ButtonAdvancedResults>
+				</AdvancedOptions>
 			</ResultsCard>
 		);
 	};
 
+
+
 	return (
 		<HomeWrapper>
 			<Title>MARCO POLO</Title>
-			{!results ? (
-				<AutocompleteBox>
-					<AutocompleteInput>
-						<Autocomplete
-							value={inputValue}
-							onChange={handleInput}
-							onKeyDown={handleKeyPress}
-						/>
-						<SearchIcon onClick={handleClick} />
-						<AutocompleteList
-							suggestionList={suggestionList}
-							handleSuggestion={handleSuggestion}
-							navigationIndex={navigationIndex}
-						/>
-					</AutocompleteInput>
-				</AutocompleteBox>
-			) : null}
+			<AutocompleteBox>
+				<AutocompleteInput>
+					<Autocomplete
+						value={inputValue}
+						onChange={handleInput}
+						onKeyDown={handleKeyPress}
+						placeholder='Search for a Country'
+					/>
+					<SearchIcon onClick={handleClick} />
+					<AutocompleteList
+						suggestionList={suggestionList}
+						handleSuggestion={handleSuggestion}
+						navigationIndex={navigationIndex}
+					/>
+				</AutocompleteInput>
+			</AutocompleteBox>
 			{results ? (
 				<ResultsBox />
-			) : Object.keys(countryCode).length !== 0 ? (
-				<DoneButton onClick={handleResults}>Results</DoneButton>
 			) : (
 				<DoneButtonDisabled />
 			)}
-			<Map countryCode={countryCode} handleClickCountry={handleClickCountry} />
+			<Suspense fallback={<div>Loading...</div>}>
+				<Map
+					countryCode={countryCode}
+					handleClickCountry={handleClickCountry}
+				/>
+			</Suspense>
 		</HomeWrapper>
 	);
 }
