@@ -1,5 +1,5 @@
-import React, { Suspense, useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
 import { AutocompleteList } from './AutocompleteList';
 import { data } from './CountryCodes';
@@ -62,8 +62,17 @@ const SearchIcon = styled(SearchLocation)`
 	right: -40px;
 `;
 
-const DoneButtonDisabled = styled.div`
-    height: 10em;
+const BlankSpace = styled.div`
+	height: 11em;
+`;
+
+const blowup = keyframes`
+  0% {
+	transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
 `;
 
 const ResultsCard = styled.div`
@@ -79,8 +88,11 @@ const ResultsCard = styled.div`
 	display: flex;
 	justify-content: center;
 	text-align: center;
-	font-size: 20px;
+	font-size: 15px;
 	font-weight: 500;
+	animation: ${blowup} 1s;
+	border-radius: 10px;
+	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const AdvancedOptions = styled.div`
@@ -88,34 +100,116 @@ const AdvancedOptions = styled.div`
 	right: -8em;
 	top: 0;
 	display: inline-grid;
-    align-items: center;
+	align-items: center;
 `;
 
 const ButtonAdvancedResults = styled.button`
-    margin-top: 5px;
-    margin-bottom: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 	width: 6em;
-	border: 2px solid palevioletred;
+	border: 1px solid palevioletred;
 	border-radius: 6px;
 	padding: 7px;
 	background-color: white;
 	color: palevioletred;
-	font-size: 20px;
-	font-weight: 700;
-	&:hover{
-		cursor: pointer
+	font-size: 15px;
+	font-weight: 500;
+	&:hover {
+		cursor: pointer;
 	}
 `;
 
 const Bold = styled.p`
 	display: contents;
 	color: palevioletred;
-	font-size: 27px;
+	font-size: 23px;
 	font-weight: 700;
-	&:hover {
-		color: #f6bd60;
-	}
 `;
+
+const Spinner = styled.div`
+	width: 40px;
+	height: 40px;
+	position: relative;
+	margin: 100px auto;
+	color: palevioletred;
+`;
+
+const skbounce = keyframes`
+   0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+`;
+
+const DoubleBounce1 = styled.div`
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: palevioletred;
+	opacity: 0.6;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-webkit-animation: ${skbounce} 2s infinite ease-in-out;
+	animation: ${skbounce} 2s infinite ease-in-out;
+`;
+
+const DoubleBounce2 = styled.div`
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: palevioletred;
+	opacity: 0.6;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-webkit-animation: ${skbounce} 2s infinite ease-in-out;
+	animation: ${skbounce} 2s infinite ease-in-out;
+	-webkit-animation-delay: -1s;
+	animation-delay: -1s;
+`;
+
+const ResultsBox = ({ countryCode, results, setResetMap }) => {
+	let averageCountryTraveled = 5.29;
+	let userCountrytraveled = Object.keys(countryCode).length;
+	let countryRate = userCountrytraveled / averageCountryTraveled;
+	countryRate = countryRate.toFixed(1);
+	let travelerRank = '';
+
+	if (results) {
+		if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
+		if (userCountrytraveled > 2 && userCountrytraveled <= 5)
+			travelerRank = 'Young Scout 🐿 ';
+		if (userCountrytraveled > 5 && userCountrytraveled <= 10)
+			travelerRank = 'Adventurous 🧑‍🚀 🚀 ';
+		if (userCountrytraveled > 10) travelerRank = 'Phileas Fogg  🌍 🛸 ';
+	}
+
+	return (
+		<ResultsCard>
+			You have explored <Bold>{results}</Bold> of the world! <Bold> 🎊 🎉</Bold>{' '}
+			({userCountrytraveled} countries)
+			<br />
+			<br /> You earn the rank of <Bold>{travelerRank}!</Bold> <br />
+			<br /> You travel <Bold>{countryRate}</Bold> times the average
+			<br />
+			<AdvancedOptions>
+				<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
+				<ButtonAdvancedResults>Share it</ButtonAdvancedResults>
+				<ButtonAdvancedResults onClick={setResetMap}>
+					Reset
+				</ButtonAdvancedResults>
+			</AdvancedOptions>
+		</ResultsCard>
+	);
+};
+
+const Loading = () => {
+	return (
+		<Spinner>
+			<DoubleBounce1></DoubleBounce1>
+			<DoubleBounce2></DoubleBounce2>
+		</Spinner>
+	);
+};
 
 function App() {
 	const [inputValue, setInputValue] = useState('');
@@ -163,6 +257,14 @@ function App() {
 		setResults(calc + '%');
 	};
 
+	const setResetMap = () => {
+		setCountryCode({});
+		setSuggestionList([]);
+		setNavigationIndex(0);
+		setInputValue('');
+		setResults(0 + '%');
+	};
+
 	const handleKeyPress = (e) => {
 		let cont;
 		if (suggestionList.length > 0) {
@@ -192,11 +294,11 @@ function App() {
 		}
 	};
 
-	const handleClick = (e) => {
+	const handleClick = useCallback((e) => {
 		if (suggestionList) {
 			setColorMap(suggestionList, 0);
 		}
-	};
+	}, []);
 
 	const handleSuggestion = (index) => {
 		setColorMap(suggestionList, index);
@@ -213,42 +315,6 @@ function App() {
 		});
 		setColorMap(countryMatch, 0);
 	};
-
-	const ResultsBox = () => {
-		let averageCountryTraveled = 5.29;
-		let userCountrytraveled = Object.keys(countryCode).length;
-		let countryRate = userCountrytraveled / averageCountryTraveled;
-		countryRate = countryRate.toFixed(1);
-		let travelerRank = '';
-
-
-		if (results) {
-			if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
-			if (userCountrytraveled > 2 && userCountrytraveled <= 5)
-				travelerRank = 'Young Scout 🐿 ';
-			if (userCountrytraveled > 5 && userCountrytraveled <= 10)
-				travelerRank = 'Adventurous 🧑‍🚀 🚀 ';
-			if (userCountrytraveled > 10) travelerRank = 'Phileas Fogg  🌍 🛸 ';
-		}
-
-		return (
-			<ResultsCard>
-				You have explored <Bold>{results}</Bold> of the world!{' '}
-				<Bold> 🎊 🎉</Bold> ({userCountrytraveled} countries)
-				<br />
-				<br /> You earn the rank of <Bold>{travelerRank}!</Bold> <br />
-				<br /> You travel <Bold>{countryRate}</Bold> times the average
-				<br />
-				<AdvancedOptions>
-					<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
-					<ButtonAdvancedResults>Share it</ButtonAdvancedResults>
-					<ButtonAdvancedResults>Reset</ButtonAdvancedResults>
-				</AdvancedOptions>
-			</ResultsCard>
-		);
-	};
-
-
 
 	return (
 		<HomeWrapper>
@@ -270,11 +336,15 @@ function App() {
 				</AutocompleteInput>
 			</AutocompleteBox>
 			{results ? (
-				<ResultsBox />
+				<ResultsBox
+					countryCode={countryCode}
+					results={results}
+					setResetMap={setResetMap}
+				/>
 			) : (
-				<DoneButtonDisabled />
+				<BlankSpace />
 			)}
-			<Suspense fallback={<div>Loading...</div>}>
+			<Suspense fallback={<Loading />}>
 				<Map
 					countryCode={countryCode}
 					handleClickCountry={handleClickCountry}

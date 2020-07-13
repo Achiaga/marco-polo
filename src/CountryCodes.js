@@ -79,7 +79,7 @@ export const data = [
 	{ id: 192, name: 'Cuba', alpha2: 'cu', alpha3: 'cub' },
 	{ id: 531, name: 'Curaçao', alpha2: 'cw', alpha3: 'cuw' },
 	{ id: 196, name: 'Cyprus', alpha2: 'cy', alpha3: 'cyp' },
-	{ id: 203, name: 'Czechia', alpha2: 'cz', alpha3: 'cze' },
+	{ id: 203, name: 'Czech Republic', alpha2: 'cz', alpha3: 'cze' },
 	{ id: 208, name: 'Denmark', alpha2: 'dk', alpha3: 'dnk' },
 	{ id: 262, name: 'Djibouti', alpha2: 'dj', alpha3: 'dji' },
 	{ id: 212, name: 'Dominica', alpha2: 'dm', alpha3: 'dma' },
