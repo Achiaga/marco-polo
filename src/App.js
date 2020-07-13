@@ -17,9 +17,7 @@ const Title = styled.h1`
 	font-family: 'Fredericka the Great', cursive;
 `;
 
-const AutocompleteBox = styled.div`
-	margin-bottom: 3em;
-`;
+const AutocompleteBox = styled.div``;
 
 const AutocompleteInput = styled.div`
 	display: flex;
@@ -56,69 +54,100 @@ const SearchIcon = styled(SearchLocation)`
 	}
 `;
 
-const info = {
-	IRL: {
-		fillKey: 'MEDIUM',
-		year: 2002,
-	},
-	USA: {
-		fillKey: 'MEDIUM',
-		year: 2002,
-	},
-	ESP: {
-		fillKey: 'MEDIUM',
-		year: 2002,
-	},
-	FRE: {
-		fillKey: 'MEDIUM',
-		year: 2002,
-	},
+const mapsFunctions = (countryCode) => {
+	const oldMap = document.getElementById('container');
+	const svgChild = oldMap.getElementsByTagName('svg');
+	if (svgChild[0]) {
+		oldMap.removeChild(svgChild[0]);
+	}
+	new Datamap({
+		element: document.getElementById('container'),
+		fills: {
+			HIGH: '#f4acb7',
+			LOW: '#f4acb7',
+			MEDIUM: '#f4acb7',
+			UNKNOWN: '#f4acb7',
+			defaultFill: '#d8e2dc',
+		},
+		data: countryCode,
+		geographyConfig: {
+			highlightFillColor: '#f6bd60',
+			highlightBorderColor: '#f7ede2',
+			popupTemplate: function (geo, data) {
+				return [
+					'<div class="hoverinfo"><strong>',
+					'YEAR : ' + data.year,
+					'</strong></div>',
+				].join('');
+			},
+		},
+	});
 };
+
+function useWindowSize() {
+	const isClient = typeof window === 'object';
+
+	function getSize() {
+		return {
+			width: isClient ? window.innerWidth : undefined,
+			height: isClient ? window.innerHeight : undefined,
+		};
+	}
+
+	const [windowSize, setWindowSize] = useState(getSize);
+
+	useEffect(() => {
+		if (!isClient) {
+			return false;
+		}
+
+		function handleResize() {
+			setWindowSize(getSize());
+		}
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []); // Empty array ensures that effect is only run on mount and unmount
+
+	return windowSize;
+}
 
 function App() {
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
+	const [countryCode, setCountryCode] = useState({});
+	const [navigationIndex, setNavigationIndex] = useState(-1);
+	const size = useWindowSize();
 
-	const mapsFunctions = () => {
-		var map = new Datamap({
-			element: document.getElementById('container'),
-			fills: {
-				HIGH: '#f5cac3',
-				LOW: '#f5cac3',
-				MEDIUM: '#f4acb7',
-				UNKNOWN: 'rgb(0,0,0)',
-				defaultFill: '#d8e2dc',
-			},
-			data: info,
-			geographyConfig: {
-				highlightFillColor: '#f6bd60',
-				highlightBorderColor: '#f7ede2',
-				popupTemplate: function (geo, data) {
-					return [
-						'<div class="hoverinfo"><strong>',
-						'YEAR : ' + data.year,
-						'</strong></div>',
-					].join('');
-				},
-			},
-		});
+	const info = {
+		IRL: {
+			fillKey: 'MEDIUM',
+			year: 2002,
+		},
+		USA: {
+			fillKey: 'MEDIUM',
+			year: 2002,
+		},
+		ESP: {
+			fillKey: 'MEDIUM',
+			year: 2002,
+		},
+		FRA: {
+			fillKey: 'MEDIUM',
+			year: 2002,
+		},
 	};
 
+	console.log(info);
+	console.log(countryCode);
+
 	useEffect(() => {
-		mapsFunctions();
-	}, []);
+		mapsFunctions(countryCode);
+	}, [countryCode]);
 
-	const list = [
-		'Spain',
-		'Estonia',
-		'Slovakia',
-		'Sparta',
-		'Eslovaquia',
-		'Satan',
-		'Soviet Union',
-	];
-
-	console.log(data[0].name);
+	useEffect(() => {
+		mapsFunctions(countryCode);
+	}, [size.width]);
 
 	const handleInput = (e) => {
 		const { value } = e.target;
@@ -126,21 +155,52 @@ function App() {
 		handleAutocomplete(value);
 	};
 
+	const handleKeyPress = (e) => {
+		let cont;
+		if (e.keyCode == 40) {
+			cont = navigationIndex;
+			cont++;
+			setNavigationIndex(cont);
+		}
+		if (e.keyCode == 38) {
+			cont = navigationIndex;
+			cont--;
+			setNavigationIndex(cont);
+		}
+		if (e.keyCode == 13 && navigationIndex > -1) {
+			suggestionList[navigationIndex].alpha3 = suggestionList[
+				navigationIndex
+			].alpha3.toUpperCase();
+			setCountryCode({
+				...countryCode,
+				[suggestionList[navigationIndex].alpha3]: { fillKey: 'MEDIUM' },
+			});
+			setSuggestionList([]);
+			setNavigationIndex(-1);
+			setInputValue('');
+		}
+	};
+
 	const handleClick = (e) => {
 		console.log('click', inputValue);
+	};
+
+	const handleSuggestion = (index) => {
+		setCountryCode(suggestionList[index]);
+		setSuggestionList([]);
+		setNavigationIndex(-1);
+		setInputValue('');
 	};
 
 	const handleAutocomplete = (value) => {
 		let suggestionArray;
 		if (value) {
-			suggestionArray = data.filter((word, index) =>
-				// word[index].toLowerCase().includes(value)
-				console.log(word[index])
+			suggestionArray = data.filter((word) =>
+				word.name.toLowerCase().includes(value.toLowerCase())
 			);
 			suggestionArray = suggestionArray.slice(0, 5);
 			setSuggestionList(suggestionArray);
 		} else if (value === '') {
-			console.log(value);
 			setSuggestionList([]);
 		}
 	};
@@ -150,12 +210,17 @@ function App() {
 			<Title>MARCO POLO</Title>
 			<AutocompleteBox>
 				<AutocompleteInput>
-					<Autocomplete value={inputValue} onChange={handleInput} />
+					<Autocomplete
+						value={inputValue}
+						onChange={handleInput}
+						onKeyDown={handleKeyPress}
+					/>
 					<SearchIcon onClick={handleClick} />
 				</AutocompleteInput>
 				<AutocompleteList
 					suggestionList={suggestionList}
-					inputValue={inputValue}
+					handleSuggestion={handleSuggestion}
+					navigationIndex={navigationIndex}
 				/>
 			</AutocompleteBox>
 			<div
@@ -163,8 +228,8 @@ function App() {
 				style={{
 					margin: 'auto',
 					position: 'relative',
-					width: '90vw',
-					height: '600px',
+					width: size.width,
+					height: size.height,
 				}}
 			/>
 		</HomeWrapper>

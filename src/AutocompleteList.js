@@ -22,15 +22,30 @@ const AutocompleteWord = styled.div`
 		cursor: pointer;
 		color: palevioletred;
 	}
+	&.active {
+		cursor: pointer;
+		color: palevioletred;
+		background-color: #fdf5ea;
+	}
 `;
 
-export const AutocompleteList = ({ suggestionList }) => {
-	console.log(suggestionList);
+export const AutocompleteList = ({
+	suggestionList,
+	handleSuggestion,
+	navigationIndex,
+}) => {
 	return (
 		<AutocompleteListWrapper>
 			{suggestionList
-				? suggestionList.map((item) => {
-						return <AutocompleteWord key={item}>{item}</AutocompleteWord>;
+				? Object.keys(suggestionList).map((item, index) => {
+						return (
+							<AutocompleteWord
+								key={`${suggestionList[item].name}+${index}`}
+								onClick={() => handleSuggestion(index)}
+								className={navigationIndex === index ? 'active' : null}>
+								{suggestionList[item].name}
+							</AutocompleteWord>
+						);
 				  })
 				: null}
 		</AutocompleteListWrapper>
