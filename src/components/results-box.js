@@ -11,18 +11,16 @@ const blowup = keyframes`
 `;
 
 const ResultsCard = styled.div`
-	width: 30em;
+	width: 40vw;
 	margin: auto;
 	position: relative;
+	text-align: center;
 	height: auto;
-	padding: 0.7em 0.3em;
+	padding: 1px;
 	background-color: #faebd7;
 	color: palevioletred;
 	margin-top: 1em;
 	margin-bottom: 1em;
-	display: flex;
-	justify-content: center;
-	text-align: center;
 	font-size: 15px;
 	font-weight: 500;
 	animation: ${blowup} 1s;
@@ -33,14 +31,13 @@ const ResultsCard = styled.div`
 const AdvancedOptions = styled.div`
 	position: absolute;
 	right: -8em;
-	top: 0;
+	top: 1em;
 	display: inline-grid;
 	align-items: center;
 `;
 
 const ButtonAdvancedResults = styled.button`
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin: 1em 0;
 	width: 6em;
 	border: ${(props) =>
 		props.theme === 'light'
@@ -60,10 +57,10 @@ const ButtonAdvancedResults = styled.button`
 	}
 `;
 
-const Bold = styled.p`
+const Bold = styled.h4`
 	display: contents;
 	color: palevioletred;
-	font-size: 23px;
+	font-size: 1.5em;
 	font-weight: 700;
 `;
 
@@ -85,16 +82,20 @@ const ResultsBox = ({ countryCode, results, setResetMap, theme }) => {
 
 	return (
 		<ResultsCard>
-			You have explored <Bold>{results}</Bold> of the world! <Bold> 🎊 🎉</Bold>{' '}
-			({userCountrytraveled} countries)
-			<br />
-			<br /> You earn the rank of <Bold>{travelerRank}!</Bold> <br />
-			<br /> You travel <Bold>{countryRate}</Bold> times the average
-			<br />
+			<h4>
+				You have explored <Bold>{results}</Bold> of the world!{' '}
+				<Bold> 🎊 🎉</Bold> ({userCountrytraveled} countries)
+			</h4>
+			<h4>
+				You earn the rank of <Bold>{travelerRank}!</Bold>
+			</h4>
+			<h4>
+				You travel <Bold>{countryRate}</Bold> times the average
+			</h4>
 			<AdvancedOptions>
-				<ButtonAdvancedResults theme={theme}>
+				{/* <ButtonAdvancedResults theme={theme}>
 					More Analytics
-				</ButtonAdvancedResults>
+				</ButtonAdvancedResults> */}
 				<ButtonAdvancedResults theme={theme}>Share it</ButtonAdvancedResults>
 				<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
 					Reset

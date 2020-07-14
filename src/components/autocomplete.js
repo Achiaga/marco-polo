@@ -10,6 +10,7 @@ const AutocompleteBox = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 2em 0;
 `;
 
 const SearchIcon = styled(SearchLocation)`

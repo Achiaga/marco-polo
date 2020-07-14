@@ -12,19 +12,27 @@ import Autocomplete from './components/autocomplete';
 import ResultsBox from './components/results-box';
 import Loader from './components/loader/loader';
 import Toggle from './components/toggle/toggle';
+import PlaneImg from './assets/plane.png';
 
 const Map = React.lazy(() => import('./map'));
 
 const HomeWrapper = styled.div``;
 
 const Title = styled.h1`
-	font-size: 4em;
-	margin-top: 0.3em;
-	margin-bottom: 0.5em;
+	position: absolute;
+	width: 5em;
+	left: 0.5em;
+	font-size: 3em;
 	font-weight: 400;
 	text-align: center;
 	color: palevioletred;
 	font-family: 'Fredericka the Great', cursive;
+`;
+
+const Plane = styled.img`
+	position: absolute;
+	width: 1.5em;
+	bottom: -0.5em;
 `;
 
 const BlankSpace = styled.div`
@@ -144,7 +152,10 @@ function App() {
 			<>
 				<GlobalStyles />
 				<HomeWrapper>
-					<Title>MARCO POLO</Title>
+					<Title>
+						MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
+					</Title>
+
 					<ToggleWrapper>
 						<Toggle theme={theme} toggleTheme={themeToggler} />
 					</ToggleWrapper>
