@@ -1,7 +1,7 @@
 import React from 'react';
-import './Loader.css';
+import './loader.css';
 
-export const Loader = () => {
+const Loader = () => {
 	return (
 		<div className='plane'>
 			<svg
@@ -30,3 +30,5 @@ export const Loader = () => {
 		</div>
 	);
 };
+
+export default Loader;

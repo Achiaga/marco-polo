@@ -1,10 +1,17 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { data } from './CountryCodes';
-import { Loader } from './Loader';
 import ReactGA from 'react-ga';
+
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyles } from './components/themes/globalStyles';
+import { lightTheme, darkTheme } from './components/themes/themes';
+import { useDarkMode } from './components/themes/useDarkMode';
+
+import { data } from './CountryCodes';
 import Autocomplete from './components/autocomplete';
 import ResultsBox from './components/results-box';
+import Loader from './components/loader/loader';
+import Toggle from './components/toggle/toggle';
 
 const Map = React.lazy(() => import('./map'));
 
@@ -64,6 +71,11 @@ const DoubleBounce2 = styled.div`
 	-webkit-animation-delay: -1s;
 	animation-delay: -1s;
 `;
+const ToggleWrapper = styled.div`
+	position: absolute;
+	top: 3em;
+	right: 6em;
+`;
 
 const Loading = () => {
 	return (
@@ -87,6 +99,9 @@ function App() {
 	const [countriesList, setCountriesList] = useState(parseListTobject(data));
 	const [countryCode, setCountryCode] = useState({});
 	const [results, setResults] = useState();
+	const [theme, themeToggler] = useDarkMode();
+
+	const themeMode = theme === 'light' ? lightTheme : darkTheme;
 
 	useEffect(() => {
 		const trackingId = 'UA-172521898-1';
@@ -125,25 +140,38 @@ function App() {
 	};
 
 	return (
-		<HomeWrapper>
-			<Title>MARCO POLO</Title>
-			<Autocomplete countriesList={countriesList} setColorMap={setColorMap} />
-			{results ? (
-				<ResultsBox
-					countryCode={countryCode}
-					results={results}
-					setResetMap={setResetMap}
-				/>
-			) : (
-				<BlankSpace />
-			)}
-			<Suspense fallback={<Loader />}>
-				<Map
-					countryCode={countryCode}
-					handleClickCountry={handleClickCountry}
-				/>
-			</Suspense>
-		</HomeWrapper>
+		<ThemeProvider theme={themeMode}>
+			<>
+				<GlobalStyles />
+				<HomeWrapper>
+					<Title>MARCO POLO</Title>
+					<ToggleWrapper>
+						<Toggle theme={theme} toggleTheme={themeToggler} />
+					</ToggleWrapper>
+					<Autocomplete
+						countriesList={countriesList}
+						setColorMap={setColorMap}
+						theme={theme}
+					/>
+					{results ? (
+						<ResultsBox
+							countryCode={countryCode}
+							results={results}
+							setResetMap={setResetMap}
+							theme={theme}
+						/>
+					) : (
+						<BlankSpace />
+					)}
+					<Suspense fallback={<Loader />}>
+						<Map
+							countryCode={countryCode}
+							handleClickCountry={handleClickCountry}
+						/>
+					</Suspense>
+				</HomeWrapper>
+			</>
+		</ThemeProvider>
 	);
 }
 

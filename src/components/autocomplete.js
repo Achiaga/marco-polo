@@ -57,7 +57,7 @@ const parseObject = (data) => {
 	}, {});
 };
 
-const Autocomplete = ({ setColorMap, countriesList }) => {
+const Autocomplete = ({ setColorMap, countriesList, theme }) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
@@ -142,6 +142,7 @@ const Autocomplete = ({ setColorMap, countriesList }) => {
 					suggestionList={suggestionList}
 					handleSuggestion={handleSuggestion}
 					navigationIndex={navigationIndex}
+					theme={theme}
 				/>
 			</AutocompleteInput>
 		</AutocompleteBox>

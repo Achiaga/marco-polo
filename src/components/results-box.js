@@ -42,15 +42,21 @@ const ButtonAdvancedResults = styled.button`
 	margin-top: 5px;
 	margin-bottom: 5px;
 	width: 6em;
-	border: 1px solid palevioletred;
+	border: ${(props) =>
+		props.theme === 'light'
+			? ' 1px solid palevioletred'
+			: ' 1px solid transparent'};
 	border-radius: 6px;
 	padding: 7px;
 	background-color: white;
 	color: palevioletred;
 	font-size: 15px;
 	font-weight: 500;
+	transition: all 0.2s ease-in-out;
 	&:hover {
+		transform: scale(1.1);
 		cursor: pointer;
+		border: 1px solid palevioletred;
 	}
 `;
 
@@ -61,7 +67,7 @@ const Bold = styled.p`
 	font-weight: 700;
 `;
 
-const ResultsBox = ({ countryCode, results, setResetMap }) => {
+const ResultsBox = ({ countryCode, results, setResetMap, theme }) => {
 	let averageCountryTraveled = 5.29;
 	let userCountrytraveled = Object.keys(countryCode).length;
 	let countryRate = userCountrytraveled / averageCountryTraveled;
@@ -86,9 +92,11 @@ const ResultsBox = ({ countryCode, results, setResetMap }) => {
 			<br /> You travel <Bold>{countryRate}</Bold> times the average
 			<br />
 			<AdvancedOptions>
-				<ButtonAdvancedResults>More Results</ButtonAdvancedResults>
-				<ButtonAdvancedResults>Share it</ButtonAdvancedResults>
-				<ButtonAdvancedResults onClick={setResetMap}>
+				<ButtonAdvancedResults theme={theme}>
+					More Analytics
+				</ButtonAdvancedResults>
+				<ButtonAdvancedResults theme={theme}>Share it</ButtonAdvancedResults>
+				<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
 					Reset
 				</ButtonAdvancedResults>
 			</AdvancedOptions>
