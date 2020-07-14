@@ -33,7 +33,7 @@ const mapsFunctions = (countryCode, handleClickCountry) => {
 			datamap.svg
 				.selectAll('.datamaps-subunit')
 				.on('click', function (geography) {
-					const country = geography.properties.name;
+					const country = geography.id;
 					handleClickCountry(country);
 				});
 		},

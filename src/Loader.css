@@ -1,0 +1,45 @@
+.plane {
+	width: 100%;
+	height: 100%;
+}
+.plane {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-bottom: 3rem;
+	color: #fff;
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 10px;
+	font-weight: 100;
+}
+
+.svg-calLoader {
+	width: 230px;
+	height: 230px;
+	transform-origin: 115px 115px;
+	animation: 2s linear infinite loader-spin;
+}
+.cal-loader__plane {
+	fill: deepskyblue;
+}
+.cal-loader__path {
+	stroke: darkblue;
+	animation: 1.8s ease-in-out infinite loader-path;
+}
+@keyframes loader-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@keyframes loader-path {
+	0% {
+		stroke-dasharray: 0, 580, 0, 0, 0, 0, 0, 0, 0;
+	}
+	50% {
+		stroke-dasharray: 0, 450, 10, 30, 10, 30, 10, 30, 10;
+	}
+	100% {
+		stroke-dasharray: 0, 580, 0, 0, 0, 0, 0, 0, 0;
+	}
+}

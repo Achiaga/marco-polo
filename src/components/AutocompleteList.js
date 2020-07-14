@@ -40,14 +40,14 @@ export const AutocompleteList = ({
 	return (
 		<AutocompleteListWrapper>
 			{suggestionList
-				? Object.keys(suggestionList).map((item, index) => {
+				? suggestionList.map((item, index) => {
 						return (
 							<AutocompleteWord
-								key={`${suggestionList[item].name}+${index}`}
-								onClick={() => handleSuggestion(index)}
+								key={`${suggestionList[index]}+${index}`}
+								onClick={() => handleSuggestion(item)}
 								id={index === suggestionList.length - 1 ? 'last' : null}
 								className={navigationIndex === index ? 'active' : null}>
-								{suggestionList[item].name}
+								{item}
 							</AutocompleteWord>
 						);
 				  })
