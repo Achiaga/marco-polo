@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
+import ReactGA from 'react-ga';
 
-import { data } from '../CountryCodes';
+import { data } from '../../CountryCodes';
 
 import { AutocompleteList } from './AutocompleteList';
 
@@ -10,12 +11,12 @@ const AutocompleteBox = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 2em 0;
-	transform: translate(-20px, 0px);
+	padding-top: 3em;
+	padding-bottom: 1em;
 `;
 
 const SearchIcon = styled(SearchLocation)`
-	width: 24px;
+	width: ${(props) => (props.modalState ? '44px' : '24px')};
 	border: 1px solid palevioletred;
 	border-radius: 0px 6px 6px 0px;
 	padding: 7px;
@@ -27,10 +28,10 @@ const SearchIcon = styled(SearchLocation)`
 		color: white;
 	}
 	position: absolute;
-	right: -40px;
+	right: ${(props) => (props.modalState ? '-57px' : '-40px')};
 `;
 
-const AutocompleteInput = styled.div`
+const AutocompleteWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -38,10 +39,10 @@ const AutocompleteInput = styled.div`
 	width: fit-content;
 	position: relative;
 `;
-const AutocompleteWrapper = styled.input`
+const AutocompleteInput = styled.input`
 	display: flex;
-	font-size: 20px;
-	width: 10em;
+	font-size: ${(props) => (props.modalState ? '30px' : '20px')};
+	width: ${(props) => (props.modalState ? '16em' : '10em')};
 	padding: 0.3em;
 	border: 1px solid palevioletred;
 	border-radius: 6px 0px 0px 6px;
@@ -88,7 +89,14 @@ const parseObject = (data) => {
 	}, {});
 };
 
-const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
+const Autocomplete = ({
+	setColorMap,
+	countriesList,
+	theme,
+	setResetMap,
+	handleOpenModal,
+	modalState,
+}) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
@@ -157,32 +165,45 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 		setInputValue('');
 	};
 
+	const handleShare = (item) => {
+		ReactGA.event({
+			category: 'Shared',
+			action: 'Clicked',
+		});
+	};
+
 	return (
 		<AutocompleteBox>
-			<AutocompleteInput>
-				<AutocompleteWrapper
+			<AutocompleteWrapper>
+				<AutocompleteInput
 					value={inputValue}
+					onClick={handleOpenModal}
 					onChange={handleInput}
 					onKeyDown={handleKeyPress}
+					modalState={modalState}
 					placeholder='Search for a Country'
 				/>
-				<SearchIcon onClick={handleClick} />
-				<AdvancedOptions>
-					{/* <ButtonAdvancedResults theme={theme}>
-					More Analytics
-				</ButtonAdvancedResults> */}
-					<ButtonAdvancedResults theme={theme}>Share it</ButtonAdvancedResults>
-					<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
-						Reset
-					</ButtonAdvancedResults>
-				</AdvancedOptions>
-				<AutocompleteList
-					suggestionList={suggestionList}
-					handleSuggestion={handleSuggestion}
-					navigationIndex={navigationIndex}
-					theme={theme}
-				/>
-			</AutocompleteInput>
+				<SearchIcon onClick={handleClick} modalState={modalState} />
+				{!modalState ? (
+					<AdvancedOptions>
+						<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
+							Reset
+						</ButtonAdvancedResults>
+						<ButtonAdvancedResults theme={theme} onClick={handleShare}>
+							Share it
+						</ButtonAdvancedResults>
+					</AdvancedOptions>
+				) : null}
+				{modalState ? (
+					<AutocompleteList
+						modalState={modalState}
+						suggestionList={suggestionList}
+						handleSuggestion={handleSuggestion}
+						navigationIndex={navigationIndex}
+						theme={theme}
+					/>
+				) : null}
+			</AutocompleteWrapper>
 		</AutocompleteBox>
 	);
 };

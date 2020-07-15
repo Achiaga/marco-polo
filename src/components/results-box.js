@@ -11,7 +11,7 @@ const blowup = keyframes`
 `;
 
 const ResultsCard = styled.div`
-	width: 35vw;
+	width: 27vw;
 	margin: auto;
 	position: relative;
 	text-align: center;
@@ -28,7 +28,7 @@ const ResultsCard = styled.div`
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 `;
 
-const Bold = styled.h5`
+const Bold = styled.span`
 	display: contents;
 	color: palevioletred;
 	font-size: 1.5em;
@@ -42,20 +42,18 @@ const ResultsBox = ({ countryCode, results, theme }) => {
 	countryRate = countryRate.toFixed(1);
 	let travelerRank = '';
 
-	if (results) {
-		if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
-		if (userCountrytraveled > 2 && userCountrytraveled <= 5)
-			travelerRank = 'Young Scout 🐿 ';
-		if (userCountrytraveled > 5 && userCountrytraveled <= 10)
-			travelerRank = 'Adventurous 🧑‍🚀 🚀 ';
-		if (userCountrytraveled > 10) travelerRank = 'Phileas Fogg  🌍 🛸 ';
-	}
+	if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
+	if (userCountrytraveled > 2 && userCountrytraveled <= 5)
+		travelerRank = 'Young Scout 🐿 ';
+	if (userCountrytraveled > 5 && userCountrytraveled <= 10)
+		travelerRank = 'Adventurous ⛺️⛵️ ';
+	if (userCountrytraveled > 10) travelerRank = 'Phileas Fogg 🧑‍🚀 🚀 ';
 
 	return (
 		<ResultsCard>
 			<h5>
-				You have explored <Bold>{results}</Bold> of the world!{' '}
-				<Bold> 🎊 🎉</Bold> ({userCountrytraveled} countries)
+				You have explored <Bold>{results}</Bold> of the world! <Bold>🌍</Bold> (
+				{userCountrytraveled} countries)
 			</h5>
 			<h5>
 				You earn the rank of <Bold>{travelerRank}!</Bold>

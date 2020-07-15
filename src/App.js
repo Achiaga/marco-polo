@@ -8,21 +8,21 @@ import { lightTheme, darkTheme } from './components/themes/themes';
 import { useDarkMode } from './components/themes/useDarkMode';
 
 import { data } from './CountryCodes';
-import Autocomplete from './components/autocomplete';
+import Autocomplete from './components/autocomplete/autocomplete';
 import ResultsBox from './components/results-box';
 import Loader from './components/loader/loader';
 import Toggle from './components/toggle/toggle';
 import PlaneImg from './assets/plane.png';
 
-const Map = React.lazy(() => import('./map'));
+const Map = React.lazy(() => import('./components/map/map'));
 
 const HomeWrapper = styled.div``;
 
 const Title = styled.h1`
 	position: absolute;
-	width: 5em;
+	width: 8em;
 	left: 0.5em;
-	font-size: 3em;
+	font-size: 2.2em;
 	font-weight: 400;
 	text-align: center;
 	color: palevioletred;
@@ -35,18 +35,7 @@ const Plane = styled.img`
 	bottom: -0.5em;
 `;
 
-const ExplanationCard = styled.div`
-	height: 35vh;
-	align-items: center;
-	margin: auto;
-	display: block;
-	padding: 0 1em;
-	border-radius: 5px;
-	width: fit-content;
-`;
-const BlankSpace = styled.div`
-	height: 35vh;
-`;
+const ExplanationCard = styled.div``;
 
 const Spinner = styled.div`
 	width: 40px;
@@ -90,16 +79,89 @@ const DoubleBounce2 = styled.div`
 `;
 const ToggleWrapper = styled.div`
 	position: absolute;
-	top: 3em;
-	right: 6em;
+	top: 1em;
+	right: 1em;
 	z-index: 9999;
 `;
 
+const InformationWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 1em;
+`;
+
+const BlankSpace = styled.div`
+	width: 9vw;
+`;
+
 const ResultsWrapper = styled.div`
-	position: absolute;
-	bottom: 1em;
-	left: 1em;
+	padding: 1em;
+	width: 30vw;
 	z-index: 9999;
+`;
+
+const ExplanationCardWrrapper = styled.div`
+	width: 35vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const List = styled.ul`
+	color: ${(props) => (props.theme === 'light' ? ' black' : ' burlywood')};
+	margin: 0;
+	font-size: 20px;
+	font-weight: 700;
+`;
+
+const ListItems = styled.li`
+	padding: 0.2em 0;
+	font-family: 'Anonymous Pro', monospace;
+`;
+
+const Emoji = styled.span`
+	font-size: 30px;
+`;
+
+const ModalWrapper = styled.div`
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 999999;
+	background: rgba(0, 0, 0, 0.5);
+`;
+
+const blowup = keyframes`
+  0% {
+	transform: translate(31vw, 0vh) scale(0) ;
+  }
+  100% {
+    transform: translate(31vw, 15vh) scale(1) ;
+  }
+`;
+
+const AutocompleteModalWrapper = styled.div`
+	z-index: 999999999;
+	position: absolute;
+	animation: ${blowup} 0.8s;
+	transform: translate(31vw, 15vh);
+`;
+
+const BlankAutcomplete = styled.div`
+	height: 104px;
+`;
+
+const CreditsWrapper = styled.div`
+	display: grid;
+	justify-content: center;
+	text-align: center;
+	margin-bottom: 1.5em;
+	color: palevioletred;
+`;
+const Credits = styled.span`
+	font-size: 20px;
+	padding: 0.3em;
 `;
 
 const Loading = () => {
@@ -108,6 +170,32 @@ const Loading = () => {
 			<DoubleBounce1></DoubleBounce1>
 			<DoubleBounce2></DoubleBounce2>
 		</Spinner>
+	);
+};
+
+const Modal = ({
+	handleCloseModal,
+	modalState,
+	handleOpenModal,
+	countriesList,
+	setColorMap,
+	theme,
+	setResetMap,
+}) => {
+	return (
+		<>
+			<ModalWrapper onClick={handleCloseModal} />
+			<AutocompleteModalWrapper>
+				<Autocomplete
+					modalState={modalState}
+					handleOpenModal={handleOpenModal}
+					countriesList={countriesList}
+					setColorMap={setColorMap}
+					theme={theme}
+					setResetMap={setResetMap}
+				/>
+			</AutocompleteModalWrapper>
+		</>
 	);
 };
 
@@ -122,11 +210,13 @@ const parseListTobject = (data) => {
 
 function App() {
 	const [countriesList, setCountriesList] = useState(parseListTobject(data));
+	const [modalState, setModalState] = useState(false);
 	const [countryCode, setCountryCode] = useState({});
-	const [results, setResults] = useState();
+	const [results, setResults] = useState('0.0%');
 	const [theme, themeToggler] = useDarkMode();
-
 	const themeMode = theme === 'light' ? lightTheme : darkTheme;
+
+	console.log(modalState);
 
 	useEffect(() => {
 		const trackingId = 'UA-172521898-1';
@@ -135,10 +225,16 @@ function App() {
 	}, []);
 
 	const setColorMap = (name, index) => {
+		let saveCountry = countriesList[name];
+		ReactGA.event({
+			category: 'Countries',
+			action: saveCountry,
+		});
 		setCountryCode({
 			...countryCode,
 			[name]: { fillKey: 'MEDIUM' },
 		});
+		setModalState(false);
 		let calc = Object.keys(countryCode).length / 1.95;
 		calc = calc.toFixed(1);
 		setResults(calc + '%');
@@ -148,8 +244,6 @@ function App() {
 		setCountryCode({});
 		setResults(0 + '%');
 	};
-
-	console.log(countryCode);
 
 	const handleClickCountry = (country) => {
 		const updatedCountryList = { ...countryCode };
@@ -164,11 +258,30 @@ function App() {
 		setColorMap(country, 0);
 	};
 
+	const handleOpenModal = () => {
+		setModalState(true);
+	};
+
+	const handleCloseModal = () => {
+		setModalState(false);
+	};
+
 	return (
 		<ThemeProvider theme={themeMode}>
 			<>
 				<GlobalStyles />
 				<HomeWrapper>
+					{modalState ? (
+						<Modal
+							modalState={modalState}
+							handleOpenModal={handleOpenModal}
+							countriesList={countriesList}
+							setColorMap={setColorMap}
+							theme={theme}
+							setResetMap={setResetMap}
+							handleCloseModal={handleCloseModal}
+						/>
+					) : null}
 					<Title>
 						MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
 					</Title>
@@ -176,29 +289,38 @@ function App() {
 					<ToggleWrapper>
 						<Toggle theme={theme} toggleTheme={themeToggler} />
 					</ToggleWrapper>
-					<Autocomplete
-						countriesList={countriesList}
-						setColorMap={setColorMap}
-						theme={theme}
-						setResetMap={setResetMap}
-					/>
-					{!results ? (
-						<ExplanationCard>
-							<h4>- Add the countries you have visited</h4>
-							<h4>- See on the map how much have you traveled</h4>
-							<h4>- Get the % of the world you have explored</h4>
-							<h4>- Share it with friends to see who traveled most</h4>
-						</ExplanationCard>
-					) : (
-						<BlankSpace />
-					)}
-					<Suspense fallback={<Loader />}>
-						<Map
-							countryCode={countryCode}
-							handleClickCountry={handleClickCountry}
+					{!modalState ? (
+						<Autocomplete
+							modalState={modalState}
+							handleOpenModal={handleOpenModal}
+							countriesList={countriesList}
+							setColorMap={setColorMap}
+							theme={theme}
+							setResetMap={setResetMap}
 						/>
-					</Suspense>
-					{results ? (
+					) : (
+						<BlankAutcomplete />
+					)}
+					<InformationWrapper>
+						<BlankSpace />
+						<ExplanationCardWrrapper>
+							<ExplanationCard>
+								<List theme={theme}>
+									<ListItems>
+										Add visited countries <Emoji>🗺</Emoji>
+									</ListItems>
+									<ListItems>
+										Track your progress <Emoji>🚀</Emoji>
+									</ListItems>
+									<ListItems>
+										Compare against other travelers <Emoji>🛫</Emoji>
+									</ListItems>
+									<ListItems>
+										Share it with other travelers <Emoji>🏝</Emoji>
+									</ListItems>
+								</List>
+							</ExplanationCard>
+						</ExplanationCardWrrapper>
 						<ResultsWrapper>
 							<ResultsBox
 								countryCode={countryCode}
@@ -206,8 +328,30 @@ function App() {
 								theme={theme}
 							/>
 						</ResultsWrapper>
-					) : null}
+					</InformationWrapper>
+					<Suspense fallback={<Loader />}>
+						<Map
+							countryCode={countryCode}
+							handleClickCountry={handleClickCountry}
+						/>
+					</Suspense>
 				</HomeWrapper>
+				<CreditsWrapper>
+					<Credits>Developed it by @bender_dev</Credits>
+					<Credits>
+						If you want me to continue developing it, you can support it with:{' '}
+						<a href='https://www.buymeacoffee.com/benderdev' target='_blank'>
+							<img
+								src='https://cdn.buymeacoffee.com/buttons/default-orange.png'
+								alt='Buy Me A Coffee'
+								style={{
+									height: '45px ',
+									width: '155px ',
+								}}
+							/>
+						</a>
+					</Credits>
+				</CreditsWrapper>
 			</>
 		</ThemeProvider>
 	);

@@ -4,22 +4,23 @@ import styled from 'styled-components';
 const AutocompleteListWrapper = styled.div`
 	position: absolute;
 	background: antiquewhite;
-	background: ${(props) => (props.theme === 'light' ? 'black' : 'white')};
-	font-size: 20px;
+	background: ${(props) =>
+		props.theme === 'light' ? 'antiquewhite' : 'white'};
+	font-size: 25px;
 	width: 80%;
 	padding: 0 10%;
 	text-align: center;
 	border-radius: 5px 5px 5px 5px;
-	top: 0px;
-	transform: translate(0px, 40px);
+	top: 19px;
 	z-index: 9999;
+	transform: translate(0px, 40px);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const AutocompleteWord = styled.div`
 	padding: 0.5em 0;
 	border-bottom: 1px solid palevioletred;
-	color: ${(props) => (props.theme === 'light' ? 'white' : 'palevioletred')};
+	color: ${(props) => (props.theme === 'light' ? 'black' : 'palevioletred')};
 	&:hover {
 		cursor: pointer;
 		color: palevioletred;
@@ -29,7 +30,7 @@ const AutocompleteWord = styled.div`
 		color: ${(props) => (props.theme === 'light' ? 'palevioletred' : 'black')};
 		background-color: #fdf5ea;
 		background-color: ${(props) =>
-			props.theme === 'light' ? 'black' : 'white'};
+			props.theme === 'light' ? 'antiquewhite' : 'white'};
 	}
 	&#last  {
 		border-bottom: none;

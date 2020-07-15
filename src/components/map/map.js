@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useWindowSize } from './utils/custom-hooks';
+import styled from 'styled-components';
+import { useWindowSize } from '../../utils/custom-hooks';
 import Datamap from 'datamaps';
+
+const MapWrapper = styled.div``;
 
 const mapsFunctions = (countryCode, handleClickCountry) => {
 	const oldMap = document.getElementById('container');
@@ -48,19 +51,19 @@ const Map = ({ countryCode, handleClickCountry }) => {
 	useEffect(() => {
 		mapsFunctions(countryCode, handleClickCountry);
 	}, [countryCode]);
-	const mapWidth = size.width - size.width * 0.2;
+	const mapWidth = size.width / 1.1;
 	return (
-		<div
-			id='container'
-			style={{
-				margin: 'auto',
-				position: 'relative',
-				marginLeft: 'auto',
-				marginRight: '1em',
-				width: mapWidth,
-				height: mapWidth / 2.25,
-			}}
-		/>
+		<MapWrapper>
+			<div
+				id='container'
+				style={{
+					margin: 'auto',
+					position: 'relative',
+					width: mapWidth,
+					height: mapWidth / 2.24,
+				}}
+			/>
+		</MapWrapper>
 	);
 };
 
