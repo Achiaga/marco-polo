@@ -11,6 +11,7 @@ const AutocompleteBox = styled.div`
 	justify-content: center;
 	align-items: center;
 	padding: 2em 0;
+	transform: translate(-20px, 0px);
 `;
 
 const SearchIcon = styled(SearchLocation)`
@@ -49,6 +50,35 @@ const AutocompleteWrapper = styled.input`
 	height: 1.3em;
 `;
 
+const AdvancedOptions = styled.div`
+	position: absolute;
+	right: -18em;
+	top: 0.2em;
+	display: flex;
+	align-items: center;
+`;
+
+const ButtonAdvancedResults = styled.button`
+	margin: 0 1em;
+	width: 6em;
+	border: ${(props) =>
+		props.theme === 'light'
+			? ' 1px solid palevioletred'
+			: ' 1px solid transparent'};
+	border-radius: 6px;
+	padding: 7px;
+	background-color: white;
+	color: palevioletred;
+	font-size: 15px;
+	font-weight: 500;
+	transition: all 0.2s ease-in-out;
+	&:hover {
+		transform: scale(1.1);
+		cursor: pointer;
+		border: 1px solid palevioletred;
+	}
+`;
+
 const parseObject = (data) => {
 	return Object.keys(data).reduce((acc, item) => {
 		return {
@@ -58,7 +88,7 @@ const parseObject = (data) => {
 	}, {});
 };
 
-const Autocomplete = ({ setColorMap, countriesList, theme }) => {
+const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
@@ -105,7 +135,7 @@ const Autocomplete = ({ setColorMap, countriesList, theme }) => {
 				if (navigationIndex > -1) {
 					handleSuggestion(suggestionList[navigationIndex]);
 				} else if (suggestionList.length === 1) {
-					setColorMap(suggestionList, 0);
+					handleSuggestion(suggestionList[0]);
 				}
 				setSuggestionList([]);
 				setNavigationIndex(0);
@@ -116,11 +146,9 @@ const Autocomplete = ({ setColorMap, countriesList, theme }) => {
 		}
 	};
 
-	const handleClick = useCallback((e) => {
-		if (suggestionList) {
-			setColorMap(suggestionList, 0);
-		}
-	}, []);
+	const handleClick = () => {
+		handleSuggestion(suggestionList[0]);
+	};
 
 	const handleSuggestion = (item) => {
 		setColorMap(newList[item]);
@@ -139,6 +167,15 @@ const Autocomplete = ({ setColorMap, countriesList, theme }) => {
 					placeholder='Search for a Country'
 				/>
 				<SearchIcon onClick={handleClick} />
+				<AdvancedOptions>
+					{/* <ButtonAdvancedResults theme={theme}>
+					More Analytics
+				</ButtonAdvancedResults> */}
+					<ButtonAdvancedResults theme={theme}>Share it</ButtonAdvancedResults>
+					<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
+						Reset
+					</ButtonAdvancedResults>
+				</AdvancedOptions>
 				<AutocompleteList
 					suggestionList={suggestionList}
 					handleSuggestion={handleSuggestion}

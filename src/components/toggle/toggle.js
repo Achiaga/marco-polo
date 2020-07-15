@@ -53,12 +53,14 @@ const MoonIcon = styled.img`
 	position: absolute;
 	left: 6px;
 	top: 4px;
+	cursor: pointer;
 `;
 const SunIcon = styled.img`
 	width: 22px;
 	position: absolute;
 	left: 32px;
 	top: 2px;
+	cursor: pointer;
 `;
 
 const isDark = ({ mode }) => {
@@ -83,6 +85,11 @@ const Toggle = ({ theme, toggleTheme }) => {
 		toggleTheme();
 	});
 
+	const handleClick = useCallback(() => {
+		setdark(!dark);
+		toggleTheme();
+	});
+
 	return (
 		<CheckBoxWrapper>
 			<CheckBox
@@ -92,7 +99,11 @@ const Toggle = ({ theme, toggleTheme }) => {
 				onChange={handleChange}
 			/>
 			<CheckBoxLabel htmlFor='checkbox' />
-			{dark ? <MoonIcon src={moonIcon} /> : <SunIcon src={sunIcon} />}
+			{dark ? (
+				<MoonIcon onClick={handleClick} src={moonIcon} />
+			) : (
+				<SunIcon onClick={handleClick} src={sunIcon} />
+			)}
 		</CheckBoxWrapper>
 	);
 };

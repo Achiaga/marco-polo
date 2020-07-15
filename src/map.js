@@ -15,7 +15,7 @@ const mapsFunctions = (countryCode, handleClickCountry) => {
 			LOW: '#f4acb7',
 			MEDIUM: '#f4acb7',
 			UNKNOWN: '#f4acb7',
-			defaultFill: '#d8e2dc',
+			defaultFill: '#a8dadc',
 		},
 		data: countryCode,
 		geographyConfig: {
@@ -55,6 +55,8 @@ const Map = ({ countryCode, handleClickCountry }) => {
 			style={{
 				margin: 'auto',
 				position: 'relative',
+				marginLeft: 'auto',
+				marginRight: '1em',
 				width: mapWidth,
 				height: mapWidth / 2.25,
 			}}

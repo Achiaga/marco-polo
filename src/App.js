@@ -35,8 +35,17 @@ const Plane = styled.img`
 	bottom: -0.5em;
 `;
 
+const ExplanationCard = styled.div`
+	height: 35vh;
+	align-items: center;
+	margin: auto;
+	display: block;
+	padding: 0 1em;
+	border-radius: 5px;
+	width: fit-content;
+`;
 const BlankSpace = styled.div`
-	height: 11em;
+	height: 35vh;
 `;
 
 const Spinner = styled.div`
@@ -83,6 +92,14 @@ const ToggleWrapper = styled.div`
 	position: absolute;
 	top: 3em;
 	right: 6em;
+	z-index: 9999;
+`;
+
+const ResultsWrapper = styled.div`
+	position: absolute;
+	bottom: 1em;
+	left: 1em;
+	z-index: 9999;
 `;
 
 const Loading = () => {
@@ -163,14 +180,15 @@ function App() {
 						countriesList={countriesList}
 						setColorMap={setColorMap}
 						theme={theme}
+						setResetMap={setResetMap}
 					/>
-					{results ? (
-						<ResultsBox
-							countryCode={countryCode}
-							results={results}
-							setResetMap={setResetMap}
-							theme={theme}
-						/>
+					{!results ? (
+						<ExplanationCard>
+							<h4>- Add the countries you have visited</h4>
+							<h4>- See on the map how much have you traveled</h4>
+							<h4>- Get the % of the world you have explored</h4>
+							<h4>- Share it with friends to see who traveled most</h4>
+						</ExplanationCard>
 					) : (
 						<BlankSpace />
 					)}
@@ -180,6 +198,15 @@ function App() {
 							handleClickCountry={handleClickCountry}
 						/>
 					</Suspense>
+					{results ? (
+						<ResultsWrapper>
+							<ResultsBox
+								countryCode={countryCode}
+								results={results}
+								theme={theme}
+							/>
+						</ResultsWrapper>
+					) : null}
 				</HomeWrapper>
 			</>
 		</ThemeProvider>
