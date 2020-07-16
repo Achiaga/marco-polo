@@ -1,7 +1,7 @@
 import ReactGA from 'react-ga';
 
 export const InitializeAnalytics = () => {
-	console.log(process.env.GA_KEY);
+	console.log(process.env);
 	if (!process.env.GA_KEY) throw new Error('localhost');
 	const trackingId = process.env.GA_KEY || '';
 	ReactGA.initialize(trackingId);
@@ -21,9 +21,10 @@ export const InitializeAnalytics = () => {
 	})(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
 };
 
-export const AnalyticsEvent = (category, action) => {
+export const AnalyticsEvent = ({ category, action, ...rest }) => {
 	ReactGA.event({
 		category: category,
 		action: action,
+		...rest,
 	});
 };

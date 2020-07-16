@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
+import { BrowserView, MobileView } from 'react-device-detect';
 import { AnalyticsEvent } from '../../utils/analytics';
 
 import { AutocompleteList } from './AutocompleteList';

@@ -1,11 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {
-	BrowserView,
-	MobileView,
-	isBrowser,
-	isMobile,
-} from 'react-device-detect';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from './components/themes/globalStyles';
