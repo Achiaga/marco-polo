@@ -1,5 +1,5 @@
-import React, { Suspense, useState, useEffect, useCallback } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { Suspense, useState, useEffect } from 'react';
+import styled from 'styled-components';
 import {
 	BrowserView,
 	MobileView,
@@ -36,10 +36,13 @@ const Title = styled.h1`
 	font-family: 'Fredericka the Great', cursive;
 `;
 
-const Plane = styled.img`
-	position: absolute;
-	width: 1.5em;
-	bottom: -0.5em;
+const TitleMobile = styled.h1`
+	width: 8em;
+	font-size: 2.2em;
+	font-weight: 400;
+	text-align: center;
+	color: palevioletred;
+	font-family: 'Fredericka the Great', cursive;
 `;
 
 const ToggleWrapper = styled.div`
@@ -47,6 +50,14 @@ const ToggleWrapper = styled.div`
 	top: 1em;
 	right: 1em;
 	z-index: 9999;
+`;
+
+const ToggleWrapperMobile = styled.div``;
+
+const Plane = styled.img`
+	position: absolute;
+	width: 1.5em;
+	bottom: -0.5em;
 `;
 
 const parseListTobject = (data) => {
@@ -68,6 +79,7 @@ function App() {
 	useEffect(() => {
 		try {
 			InitializeAnalytics();
+			console.log('enter analytics');
 		} catch (err) {
 			console.log('HOTJAR not working on local');
 		}
@@ -107,12 +119,20 @@ function App() {
 		<ThemeProvider theme={themeMode}>
 			<GlobalStyles />
 			<HomeWrapper>
-				<Title>
-					MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
-				</Title>
-				<ToggleWrapper>
-					<Toggle theme={theme} toggleTheme={themeToggler} />
-				</ToggleWrapper>
+				<MobileView>
+					<ToggleWrapperMobile>
+						<Toggle theme={theme} toggleTheme={themeToggler} />
+					</ToggleWrapperMobile>
+					<TitleMobile>MARCO POLO</TitleMobile>
+				</MobileView>
+				<BrowserView>
+					<Title>
+						MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
+					</Title>
+					<ToggleWrapper>
+						<Toggle theme={theme} toggleTheme={themeToggler} />
+					</ToggleWrapper>
+				</BrowserView>
 				<Autocomplete
 					countriesList={countriesList}
 					setColorMap={setColorMap}

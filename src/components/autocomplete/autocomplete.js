@@ -1,9 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
 import { AnalyticsEvent } from '../../utils/analytics';
-
-import { data } from '../../CountryCodes';
 
 import { AutocompleteList } from './AutocompleteList';
 
@@ -124,21 +122,21 @@ const Autocomplete = ({
 	const handleKeyPress = (e) => {
 		let cont;
 		if (suggestionList.length > 0) {
-			if (e.keyCode == 40) {
+			if (e.keyCode === 40) {
 				if (navigationIndex < suggestionList.length - 1) {
 					cont = navigationIndex;
 					cont++;
 					setNavigationIndex(cont);
 				}
 			}
-			if (e.keyCode == 38) {
+			if (e.keyCode === 38) {
 				if (navigationIndex > 0) {
 					cont = navigationIndex;
 					cont--;
 					setNavigationIndex(cont);
 				}
 			}
-			if (e.keyCode == 13) {
+			if (e.keyCode === 13) {
 				if (navigationIndex > -1) {
 					handleSuggestion(suggestionList[navigationIndex]);
 				} else if (suggestionList.length === 1) {

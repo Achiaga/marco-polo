@@ -1,8 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
 import ReactGA from 'react-ga';
 
 export const InitializeAnalytics = () => {
+	console.log(process.env.GA_KEY);
 	if (!process.env.GA_KEY) throw new Error('localhost');
 	const trackingId = process.env.GA_KEY || '';
 	ReactGA.initialize(trackingId);
