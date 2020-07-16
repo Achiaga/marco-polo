@@ -75,6 +75,7 @@ function App() {
 	const [results, setResults] = useState('0.0%');
 	const [theme, themeToggler] = useDarkMode();
 	const themeMode = theme === 'light' ? lightTheme : darkTheme;
+	const [selectedId, setSelectedId] = useState(null);
 
 	useEffect(() => {
 		try {

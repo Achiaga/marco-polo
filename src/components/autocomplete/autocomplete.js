@@ -80,6 +80,11 @@ const ButtonAdvancedResults = styled.button`
 	}
 `;
 
+const TwitterLink = styled.a`
+	color: palevioletred;
+	text-decoration: none;
+`;
+
 const AutocompleteWrapperMobile = styled.div`
 	display: flex;
 	justify-content: center;
@@ -225,7 +230,6 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 							onChange={handleInput}
 							onKeyDown={handleKeyPress}
 							type='text'
-							autoFocus
 							value={inputValue}
 							placeholder='Search for a Country'
 						/>
@@ -235,7 +239,12 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 								Reset
 							</ButtonAdvancedResults>
 							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
-								Share it
+								<TwitterLink
+									href='https://twitter.com/share?ref_src=twsrc%5Etfw'
+									class='twitter-share-button'
+									data-show-count='false'>
+									Share it
+								</TwitterLink>
 							</ButtonAdvancedResults>
 						</AdvancedOptions>
 						<AutocompleteList
@@ -270,7 +279,12 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 						Reset
 					</ButtonAdvancedResults>
 					<ButtonAdvancedResults theme={theme} onClick={handleShare}>
-						Share it
+						<TwitterLink
+							href='https://twitter.com/share?ref_src=twsrc%5Etfw'
+							class='twitter-share-button'
+							data-show-count='false'>
+							Share it
+						</TwitterLink>
 					</ButtonAdvancedResults>
 				</AdvancedOptionsMobile>
 			</MobileView>

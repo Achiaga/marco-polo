@@ -50,6 +50,7 @@ const Footer = () => {
 								style={{
 									height: '30px ',
 									width: '100px ',
+									paddingTop: '10px',
 								}}
 							/>
 						</a>

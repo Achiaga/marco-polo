@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useWindowSize } from '../../utils/custom-hooks';
+import { isMobile } from 'react-device-detect';
 import Datamap from 'datamaps';
 
 const MapWrapper = styled.div``;
@@ -25,6 +26,7 @@ const mapsFunctions = (countryCode, handleClickCountry) => {
 			highlightFillColor: '#f6bd60',
 			highlightBorderColor: '#f7ede2',
 			popupTemplate: function (geo, data) {
+				if (isMobile) return null;
 				return [
 					'<div class="hoverinfo"><strong>',
 					'Country : ' + geo.properties.name,
