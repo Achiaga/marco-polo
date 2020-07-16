@@ -16,7 +16,7 @@ const AutocompleteBox = styled.div`
 `;
 
 const SearchIcon = styled(SearchLocation)`
-	width: ${(props) => (props.modalState ? '44px' : '24px')};
+	width: 24px;
 	border: 1px solid palevioletred;
 	border-radius: 0px 6px 6px 0px;
 	padding: 7px;
@@ -28,7 +28,7 @@ const SearchIcon = styled(SearchLocation)`
 		color: white;
 	}
 	position: absolute;
-	right: ${(props) => (props.modalState ? '-57px' : '-40px')};
+	right: -40px;
 `;
 
 const AutocompleteWrapper = styled.div`
@@ -41,8 +41,8 @@ const AutocompleteWrapper = styled.div`
 `;
 const AutocompleteInput = styled.input`
 	display: flex;
-	font-size: ${(props) => (props.modalState ? '30px' : '20px')};
-	width: ${(props) => (props.modalState ? '16em' : '10em')};
+	font-size: 20px;
+	width: 10em;
 	padding: 0.3em;
 	border: 1px solid palevioletred;
 	border-radius: 6px 0px 0px 6px;
@@ -95,7 +95,6 @@ const Autocomplete = ({
 	theme,
 	setResetMap,
 	handleOpenModal,
-	modalState,
 }) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
@@ -165,7 +164,7 @@ const Autocomplete = ({
 		setInputValue('');
 	};
 
-	const handleShare = (item) => {
+	const handleShare = () => {
 		ReactGA.event({
 			category: 'Shared',
 			action: 'Clicked',
@@ -176,33 +175,29 @@ const Autocomplete = ({
 		<AutocompleteBox>
 			<AutocompleteWrapper>
 				<AutocompleteInput
-					value={inputValue}
 					onClick={handleOpenModal}
 					onChange={handleInput}
 					onKeyDown={handleKeyPress}
-					modalState={modalState}
+					type='text'
+					autoFocus
+					value={inputValue}
 					placeholder='Search for a Country'
 				/>
-				<SearchIcon onClick={handleClick} modalState={modalState} />
-				{!modalState ? (
-					<AdvancedOptions>
-						<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
-							Reset
-						</ButtonAdvancedResults>
-						<ButtonAdvancedResults theme={theme} onClick={handleShare}>
-							Share it
-						</ButtonAdvancedResults>
-					</AdvancedOptions>
-				) : null}
-				{modalState ? (
-					<AutocompleteList
-						modalState={modalState}
-						suggestionList={suggestionList}
-						handleSuggestion={handleSuggestion}
-						navigationIndex={navigationIndex}
-						theme={theme}
-					/>
-				) : null}
+				<SearchIcon onClick={handleClick} />
+				<AdvancedOptions>
+					<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
+						Reset
+					</ButtonAdvancedResults>
+					<ButtonAdvancedResults theme={theme} onClick={handleShare}>
+						Share it
+					</ButtonAdvancedResults>
+				</AdvancedOptions>
+				<AutocompleteList
+					suggestionList={suggestionList}
+					handleSuggestion={handleSuggestion}
+					navigationIndex={navigationIndex}
+					theme={theme}
+				/>
 			</AutocompleteWrapper>
 		</AutocompleteBox>
 	);
