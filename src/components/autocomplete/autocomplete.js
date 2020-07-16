@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
-import { BrowserView, MobileView } from 'react-device-detect';
+import { BrowserView, MobileView, isMobile } from 'react-device-detect';
 import { AnalyticsEvent } from '../../utils/analytics';
 
 import { AutocompleteList } from './AutocompleteList';
@@ -38,6 +38,7 @@ const AutocompleteWrapper = styled.div`
 	width: fit-content;
 	position: relative;
 `;
+
 const AutocompleteInput = styled.input`
 	display: flex;
 	font-size: 20px;
@@ -79,6 +80,56 @@ const ButtonAdvancedResults = styled.button`
 	}
 `;
 
+const AutocompleteWrapperMobile = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
+	width: fit-content;
+	position: relative;
+	padding-bottom: 1em;
+	padding-top: 1em;
+`;
+
+const AutocompleteInputMobile = styled.input`
+	display: flex;
+	font-size: 20px;
+	width: 10em;
+	padding: 0.3em;
+	border: 1px solid palevioletred;
+	border-radius: 6px 0px 0px 6px;
+	color: palevioletred;
+	background: white;
+	height: 1.3em;
+	transform: translate(-10px, 0px);
+	&:focus {
+		outline: none;
+	}
+`;
+
+const SearchIconMobile = styled(SearchLocation)`
+	width: 24px;
+	border: 1px solid palevioletred;
+	border-radius: 0px 6px 6px 0px;
+	padding: 7px;
+	background-color: palevioletred;
+	color: white;
+	&:hover {
+		cursor: pointer;
+		background-color: #da537f;
+		color: white;
+	}
+	position: absolute;
+	right: -29px;
+`;
+
+const AdvancedOptionsMobile = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-bottom: 1em;
+`;
+
 const parseObject = (data) => {
 	return Object.keys(data).reduce((acc, item) => {
 		return {
@@ -88,13 +139,7 @@ const parseObject = (data) => {
 	}, {});
 };
 
-const Autocomplete = ({
-	setColorMap,
-	countriesList,
-	theme,
-	setResetMap,
-	handleOpenModal,
-}) => {
+const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
@@ -113,7 +158,11 @@ const Autocomplete = ({
 			suggestionArray = Object.keys(newList).filter((word) =>
 				word.toLowerCase().includes(value.toLowerCase())
 			);
-			suggestionArray = suggestionArray.slice(0, 5);
+			if (isMobile) {
+				suggestionArray = suggestionArray.slice(0, 3);
+			} else {
+				suggestionArray = suggestionArray.slice(0, 5);
+			}
 			setSuggestionList(suggestionArray);
 		} else if (value === '') {
 			setSuggestionList([]);
@@ -168,34 +217,64 @@ const Autocomplete = ({
 	};
 
 	return (
-		<AutocompleteBox>
-			<AutocompleteWrapper>
-				<AutocompleteInput
-					onClick={handleOpenModal}
-					onChange={handleInput}
-					onKeyDown={handleKeyPress}
-					type='text'
-					autoFocus
-					value={inputValue}
-					placeholder='Search for a Country'
-				/>
-				<SearchIcon onClick={handleClick} />
-				<AdvancedOptions>
+		<>
+			<BrowserView>
+				<AutocompleteBox>
+					<AutocompleteWrapper>
+						<AutocompleteInput
+							onChange={handleInput}
+							onKeyDown={handleKeyPress}
+							type='text'
+							autoFocus
+							value={inputValue}
+							placeholder='Search for a Country'
+						/>
+						<SearchIcon onClick={handleClick} />
+						<AdvancedOptions>
+							<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
+								Reset
+							</ButtonAdvancedResults>
+							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
+								Share it
+							</ButtonAdvancedResults>
+						</AdvancedOptions>
+						<AutocompleteList
+							suggestionList={suggestionList}
+							handleSuggestion={handleSuggestion}
+							navigationIndex={navigationIndex}
+							theme={theme}
+						/>
+					</AutocompleteWrapper>
+				</AutocompleteBox>
+			</BrowserView>
+
+			<MobileView>
+				<AutocompleteWrapperMobile>
+					<AutocompleteInputMobile
+						onChange={handleInput}
+						onKeyDown={handleKeyPress}
+						type='text'
+						value={inputValue}
+						placeholder='Search for a Country'
+					/>
+					<SearchIconMobile onClick={handleClick} />
+					<AutocompleteList
+						suggestionList={suggestionList}
+						handleSuggestion={handleSuggestion}
+						navigationIndex={navigationIndex}
+						theme={theme}
+					/>
+				</AutocompleteWrapperMobile>
+				<AdvancedOptionsMobile>
 					<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
 						Reset
 					</ButtonAdvancedResults>
 					<ButtonAdvancedResults theme={theme} onClick={handleShare}>
 						Share it
 					</ButtonAdvancedResults>
-				</AdvancedOptions>
-				<AutocompleteList
-					suggestionList={suggestionList}
-					handleSuggestion={handleSuggestion}
-					navigationIndex={navigationIndex}
-					theme={theme}
-				/>
-			</AutocompleteWrapper>
-		</AutocompleteBox>
+				</AdvancedOptionsMobile>
+			</MobileView>
+		</>
 	);
 };
 export default Autocomplete;

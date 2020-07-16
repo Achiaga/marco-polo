@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 const blowup = keyframes`
   0% {
@@ -11,12 +12,12 @@ const blowup = keyframes`
 `;
 
 const ResultsCard = styled.div`
-	width: 27vw;
+	width: 80%;
 	margin: auto;
 	position: relative;
 	text-align: center;
 	height: auto;
-	padding: 1px;
+	padding: 5px;
 	background-color: #faebd7;
 	color: palevioletred;
 	margin-top: 1em;
@@ -31,7 +32,7 @@ const ResultsCard = styled.div`
 const Bold = styled.span`
 	display: contents;
 	color: palevioletred;
-	font-size: 1.5em;
+	font-size: 1.2em;
 	font-weight: 700;
 `;
 

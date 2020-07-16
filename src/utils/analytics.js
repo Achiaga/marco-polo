@@ -1,9 +1,8 @@
 import ReactGA from 'react-ga';
 
 export const InitializeAnalytics = () => {
-	console.log(process.env);
-	if (!process.env.GA_KEY) throw new Error('localhost');
-	const trackingId = process.env.GA_KEY || '';
+	if (!process.env.REACT_APP_GA_TRACKING) throw new Error('localhost');
+	const trackingId = process.env.REACT_APP_GA_TRACKING || '';
 	ReactGA.initialize(trackingId);
 	ReactGA.pageview('/');
 	(function (h, o, t, j, a, r) {
@@ -12,7 +11,10 @@ export const InitializeAnalytics = () => {
 			function () {
 				(h.hj.q = h.hj.q || []).push(arguments);
 			};
-		h._hjSettings = { hjid: process.env.HOTJAR_KEY || 0, hjsv: 6 };
+		h._hjSettings = {
+			hjid: process.env.REACT_APP_HOTJAR_TRACKING || 0,
+			hjsv: 6,
+		};
 		a = o.getElementsByTagName('head')[0];
 		r = o.createElement('script');
 		r.async = 1;
