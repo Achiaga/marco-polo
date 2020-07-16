@@ -1,6 +1,5 @@
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import ReactGA from 'react-ga';
 import {
 	BrowserView,
 	MobileView,
@@ -14,6 +13,7 @@ import { lightTheme, darkTheme } from './components/themes/themes';
 import { useDarkMode } from './components/themes/useDarkMode';
 
 import { data } from './CountryCodes';
+import { InitializeAnalytics, AnalyticsEvent } from './utils/analytics';
 import PlaneImg from './assets/plane.png';
 import Loader from './components/loader/loader';
 import Toggle from './components/toggle/toggle';
@@ -67,22 +67,7 @@ function App() {
 
 	useEffect(() => {
 		try {
-			const trackingId = process.env.GA_KEY || '';
-			ReactGA.initialize(trackingId);
-			ReactGA.pageview('/');
-			(function (h, o, t, j, a, r) {
-				h.hj =
-					h.hj ||
-					function () {
-						(h.hj.q = h.hj.q || []).push(arguments);
-					};
-				h._hjSettings = { hjid: process.env.HOTJAR_KEY || 0, hjsv: 6 };
-				a = o.getElementsByTagName('head')[0];
-				r = o.createElement('script');
-				r.async = 1;
-				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-				a.appendChild(r);
-			})(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+			InitializeAnalytics();
 		} catch (err) {
 			console.log('HOTJAR not working on local');
 		}
@@ -90,10 +75,7 @@ function App() {
 
 	const setColorMap = (name, index) => {
 		let saveCountry = countriesList[name];
-		ReactGA.event({
-			category: 'Countries',
-			action: saveCountry,
-		});
+		AnalyticsEvent('Countries', saveCountry);
 		setCountryCode({
 			...countryCode,
 			[name]: { fillKey: 'MEDIUM' },
@@ -123,35 +105,33 @@ function App() {
 
 	return (
 		<ThemeProvider theme={themeMode}>
-			<>
-				<GlobalStyles />
-				<HomeWrapper>
-					<Title>
-						MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
-					</Title>
-					<ToggleWrapper>
-						<Toggle theme={theme} toggleTheme={themeToggler} />
-					</ToggleWrapper>
-					<Autocomplete
-						countriesList={countriesList}
-						setColorMap={setColorMap}
-						theme={theme}
-						setResetMap={setResetMap}
-					/>
-					<Information
+			<GlobalStyles />
+			<HomeWrapper>
+				<Title>
+					MARCO POLO<Plane src={PlaneImg} alt='plane'></Plane>
+				</Title>
+				<ToggleWrapper>
+					<Toggle theme={theme} toggleTheme={themeToggler} />
+				</ToggleWrapper>
+				<Autocomplete
+					countriesList={countriesList}
+					setColorMap={setColorMap}
+					theme={theme}
+					setResetMap={setResetMap}
+				/>
+				<Information
+					countryCode={countryCode}
+					results={results}
+					theme={theme}
+				/>
+				<Suspense fallback={<Loader />}>
+					<Map
 						countryCode={countryCode}
-						results={results}
-						theme={theme}
+						handleClickCountry={handleClickCountry}
 					/>
-					<Suspense fallback={<Loader />}>
-						<Map
-							countryCode={countryCode}
-							handleClickCountry={handleClickCountry}
-						/>
-					</Suspense>
-					<Footer />
-				</HomeWrapper>
-			</>
+				</Suspense>
+				<Footer />
+			</HomeWrapper>
 		</ThemeProvider>
 	);
 }

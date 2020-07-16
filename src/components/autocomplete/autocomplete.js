@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
-import ReactGA from 'react-ga';
+import { AnalyticsEvent } from '../../utils/analytics';
 
 import { data } from '../../CountryCodes';
 
@@ -165,10 +165,7 @@ const Autocomplete = ({
 	};
 
 	const handleShare = () => {
-		ReactGA.event({
-			category: 'Shared',
-			action: 'Clicked',
-		});
+		AnalyticsEvent('Shared', 'Clicked');
 	};
 
 	return (
