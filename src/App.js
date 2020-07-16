@@ -25,19 +25,26 @@ const Map = React.lazy(() => import('./components/map/map'));
 
 const HomeWrapper = styled.div``;
 
-const Title = styled.h1`
-	position: absolute;
+const TitleMobile = styled.h1`
 	width: 8em;
-	left: 0.5em;
-	font-size: 2.2em;
+	margin: auto;
+	font-size: 2.5em;
 	font-weight: 400;
 	text-align: center;
 	color: palevioletred;
 	font-family: 'Fredericka the Great', cursive;
 `;
+const ToggleWrapperMobile = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 1em 0.5em;
+`;
 
-const TitleMobile = styled.h1`
+const Title = styled.h1`
+	position: absolute;
 	width: 8em;
+	left: 0.5em;
 	font-size: 2.2em;
 	font-weight: 400;
 	text-align: center;
@@ -51,8 +58,6 @@ const ToggleWrapper = styled.div`
 	right: 1em;
 	z-index: 9999;
 `;
-
-const ToggleWrapperMobile = styled.div``;
 
 const Plane = styled.img`
 	position: absolute;
