@@ -17,7 +17,7 @@ const ResultsCard = styled.div`
 	position: relative;
 	text-align: center;
 	height: auto;
-	padding: 5px;
+	padding: 1px;
 	background-color: #faebd7;
 	color: palevioletred;
 	margin-top: 1em;

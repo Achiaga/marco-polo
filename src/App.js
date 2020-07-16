@@ -79,7 +79,6 @@ function App() {
 	useEffect(() => {
 		try {
 			InitializeAnalytics();
-			console.log('enter analytics');
 		} catch (err) {
 			console.log('HOTJAR not working on local');
 		}

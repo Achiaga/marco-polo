@@ -23,10 +23,9 @@ export const InitializeAnalytics = () => {
 	})(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
 };
 
-export const AnalyticsEvent = ({ category, action, ...rest }) => {
+export const AnalyticsEvent = (category, action) => {
 	ReactGA.event({
 		category: category,
 		action: action,
-		...rest,
 	});
 };
