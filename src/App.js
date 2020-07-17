@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { BrowserView, MobileView } from 'react-device-detect';
+import { AnimateSharedLayout, motion, AnimatePresence } from 'framer-motion';
 
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from './components/themes/globalStyles';
@@ -69,13 +70,23 @@ const parseListTobject = (data) => {
 	}, {});
 };
 
+const Backdrop = styled.div`
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	background-color: #000000a1;
+	top: 0;
+	bottom: 0;
+`;
+
 function App() {
 	const [countriesList, setCountriesList] = useState(parseListTobject(data));
 	const [countryCode, setCountryCode] = useState({});
 	const [results, setResults] = useState('0.0%');
 	const [theme, themeToggler] = useDarkMode();
 	const themeMode = theme === 'light' ? lightTheme : darkTheme;
-	const [selectedId, setSelectedId] = useState(null);
+
+	const [isSelected, setSelected] = useState(false);
 
 	useEffect(() => {
 		try {
@@ -86,6 +97,7 @@ function App() {
 	}, []);
 
 	const setColorMap = (name, index) => {
+		setSelected(false);
 		let saveCountry = countriesList[name];
 		AnalyticsEvent('Countries', saveCountry);
 		setCountryCode({
@@ -104,6 +116,7 @@ function App() {
 
 	const handleClickCountry = (country) => {
 		const updatedCountryList = { ...countryCode };
+		setSelected(false);
 		if (updatedCountryList[country]) {
 			delete updatedCountryList[country];
 			setCountryCode(updatedCountryList);
@@ -115,6 +128,17 @@ function App() {
 		setColorMap(country, 0);
 	};
 
+	const handleTransition = (e) => {
+		console.log('handleTransition');
+		e.stopPropagation();
+		setSelected(true);
+	};
+
+	const handleBackdrop = (e) => {
+		console.log('handleBackdrop');
+		e.stopPropagation();
+		setSelected(false);
+	};
 	return (
 		<ThemeProvider theme={themeMode}>
 			<GlobalStyles />
@@ -133,12 +157,17 @@ function App() {
 						<Toggle theme={theme} toggleTheme={themeToggler} />
 					</ToggleWrapper>
 				</BrowserView>
+				{isSelected && <Backdrop onClick={handleBackdrop} />}
 				<Autocomplete
+					style={{ position: 'absolute' }}
 					countriesList={countriesList}
 					setColorMap={setColorMap}
 					theme={theme}
 					setResetMap={setResetMap}
+					isSelected={isSelected}
+					handleTransition={handleTransition}
 				/>
+
 				<Information
 					countryCode={countryCode}
 					results={results}
@@ -148,6 +177,7 @@ function App() {
 					<Map
 						countryCode={countryCode}
 						handleClickCountry={handleClickCountry}
+						isSelected={isSelected}
 					/>
 				</Suspense>
 				<Footer />

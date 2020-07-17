@@ -18,7 +18,7 @@ const BlankSpace = styled.div`
 const ResultsWrapper = styled.div`
 	padding: 1em;
 	width: 30vw;
-	z-index: 9999;
+	z-index: -1;
 `;
 
 const ExplanationCardWrrapper = styled.div`

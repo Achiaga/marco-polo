@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
 import { BrowserView, MobileView, isMobile } from 'react-device-detect';
@@ -15,7 +15,7 @@ const AutocompleteBox = styled.div`
 `;
 
 const SearchIcon = styled(SearchLocation)`
-	width: 24px;
+	width: 18px;
 	border: 1px solid palevioletred;
 	border-radius: 0px 6px 6px 0px;
 	padding: 7px;
@@ -27,7 +27,8 @@ const SearchIcon = styled(SearchLocation)`
 		color: white;
 	}
 	position: absolute;
-	right: -40px;
+	right: -34px;
+	top: 0px;
 `;
 
 const AutocompleteWrapper = styled.div`
@@ -41,7 +42,7 @@ const AutocompleteWrapper = styled.div`
 
 const AutocompleteInput = styled.input`
 	display: flex;
-	font-size: 20px;
+	font-size: 17px;
 	width: 10em;
 	padding: 0.3em;
 	border: 1px solid palevioletred;
@@ -67,7 +68,7 @@ const ButtonAdvancedResults = styled.button`
 			? ' 1px solid palevioletred'
 			: ' 1px solid transparent'};
 	border-radius: 6px;
-	padding: 7px;
+	padding: 5px;
 	background-color: white;
 	color: palevioletred;
 	font-size: 15px;
@@ -135,6 +136,12 @@ const AdvancedOptionsMobile = styled.div`
 	padding-bottom: 1em;
 `;
 
+const Transition = styled.div`
+	transform: scale(${(props) => (props.isActive ? 1.5 : 1)})
+		translateY(${(props) => (props.isActive ? 50 : 0)}px);
+	transition: transform 0.5s;
+`;
+
 const parseObject = (data) => {
 	return Object.keys(data).reduce((acc, item) => {
 		return {
@@ -144,11 +151,19 @@ const parseObject = (data) => {
 	}, {});
 };
 
-const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
+const Autocomplete = ({
+	setColorMap,
+	countriesList,
+	theme,
+	setResetMap,
+	handleTransition,
+	isSelected,
+}) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
 	const [navigationIndex, setNavigationIndex] = useState(0);
+	const inputRef = useRef();
 
 	const handleInput = (e) => {
 		const { value } = e.target;
@@ -166,7 +181,7 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 			if (isMobile) {
 				suggestionArray = suggestionArray.slice(0, 3);
 			} else {
-				suggestionArray = suggestionArray.slice(0, 5);
+				suggestionArray = suggestionArray.slice(0, 7);
 			}
 			setSuggestionList(suggestionArray);
 		} else if (value === '') {
@@ -200,6 +215,7 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 				setSuggestionList([]);
 				setNavigationIndex(0);
 				setInputValue('');
+				inputRef.current.blur();
 			}
 		} else {
 			setNavigationIndex(0);
@@ -226,33 +242,37 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 			<BrowserView>
 				<AutocompleteBox>
 					<AutocompleteWrapper>
-						<AutocompleteInput
-							onChange={handleInput}
-							onKeyDown={handleKeyPress}
-							type='text'
-							value={inputValue}
-							placeholder='Search for a Country'
-						/>
-						<SearchIcon onClick={handleClick} />
+						<Transition isActive={isSelected} onClick={handleTransition}>
+							<AutocompleteInput
+								ref={inputRef}
+								onChange={handleInput}
+								onKeyDown={handleKeyPress}
+								type='text'
+								value={inputValue}
+								placeholder='Search for a Country'
+							/>
+							<SearchIcon onClick={handleClick} />
+							<AutocompleteList
+								suggestionList={suggestionList}
+								handleSuggestion={handleSuggestion}
+								navigationIndex={navigationIndex}
+								theme={theme}
+							/>
+						</Transition>
 						<AdvancedOptions>
 							<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
 								Reset
 							</ButtonAdvancedResults>
 							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
 								<TwitterLink
-									href='https://twitter.com/share?ref_src=twsrc%5Etfw'
-									class='twitter-share-button'
+									href='https://twitter.com/share?ref_src=twsrc%5Etfw&text=Hello%20world'
+									target='_blank'
+									className='twitter-share-button'
 									data-show-count='false'>
 									Share it
 								</TwitterLink>
 							</ButtonAdvancedResults>
 						</AdvancedOptions>
-						<AutocompleteList
-							suggestionList={suggestionList}
-							handleSuggestion={handleSuggestion}
-							navigationIndex={navigationIndex}
-							theme={theme}
-						/>
 					</AutocompleteWrapper>
 				</AutocompleteBox>
 			</BrowserView>
@@ -281,7 +301,7 @@ const Autocomplete = ({ setColorMap, countriesList, theme, setResetMap }) => {
 					<ButtonAdvancedResults theme={theme} onClick={handleShare}>
 						<TwitterLink
 							href='https://twitter.com/share?ref_src=twsrc%5Etfw'
-							class='twitter-share-button'
+							className='twitter-share-button'
 							data-show-count='false'>
 							Share it
 						</TwitterLink>

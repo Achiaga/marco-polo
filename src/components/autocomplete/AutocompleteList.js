@@ -1,18 +1,28 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { BrowserView, MobileView } from 'react-device-detect';
+
+const blowup = keyframes`
+  0% {
+	transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
 
 const AutocompleteListWrapper = styled.div`
 	position: absolute;
 	background: antiquewhite;
-	font-size: 20px;
+	font-size: 14px;
 	width: 80%;
 	padding: 0 10%;
 	text-align: center;
 	border-radius: 5px 5px 5px 5px;
-	top: 0px;
+	top: -7px;
 	left: 0;
 	transform: translate(0px, 40px);
+	animation: ${blowup} 1s;
 	z-index: 9999;
 `;
 

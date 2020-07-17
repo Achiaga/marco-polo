@@ -45,7 +45,7 @@ const mapsFunctions = (countryCode, handleClickCountry) => {
 	});
 };
 
-const Map = ({ countryCode, handleClickCountry }) => {
+const Map = ({ countryCode, handleClickCountry, isSelected }) => {
 	const size = useWindowSize();
 	useEffect(() => {
 		mapsFunctions(countryCode, handleClickCountry);
@@ -60,7 +60,7 @@ const Map = ({ countryCode, handleClickCountry }) => {
 				id='container'
 				style={{
 					margin: 'auto',
-					position: 'relative',
+					position: !isSelected && 'relative',
 					width: mapWidth,
 					height: mapWidth / 2.24,
 				}}

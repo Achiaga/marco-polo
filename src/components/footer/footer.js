@@ -23,7 +23,8 @@ const Footer = () => {
 	return (
 		<CreditsWrapper>
 			<BrowserView>
-				<Credits>Developed it by @bender_dev</Credits>
+				<Credits>Developed it by @bender_dev.</Credits>
+				<br />
 				<Credits>
 					If you want me to continue developing it, you can support it with:{' '}
 					<a href='https://www.buymeacoffee.com/benderdev' target='_blank'>
@@ -39,7 +40,8 @@ const Footer = () => {
 				</Credits>
 			</BrowserView>
 			<MobileView>
-				<CreditsMobile>Developed it by @bender_dev</CreditsMobile>
+				<CreditsMobile>Developed it by @bender_dev.</CreditsMobile>
+				<br />
 				<CreditsMobile>
 					If you want me to continue developing it, you can support it with:{' '}
 					<CreditsMobile>
