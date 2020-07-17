@@ -55,8 +55,6 @@ const InformationMap = ({ countryCode, results, theme }) => {
 	countryRate = countryRate.toFixed(1);
 	explored = explored.toFixed(1);
 	let travelerRank = '';
-	console.log(explored);
-	console.log(userCountrytraveled);
 
 	if (userCountrytraveled <= 2) travelerRank = 'Coach Potato  🥔 ';
 	if (userCountrytraveled > 2 && userCountrytraveled <= 5)

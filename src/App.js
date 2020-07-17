@@ -130,13 +130,11 @@ function App() {
 	};
 
 	const handleTransition = (e) => {
-		console.log('handleTransition');
 		e.stopPropagation();
 		setSelected(true);
 	};
 
 	const handleBackdrop = (e) => {
-		console.log('handleBackdrop');
 		e.stopPropagation();
 		setSelected(false);
 	};

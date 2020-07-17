@@ -238,6 +238,12 @@ const Autocomplete = ({
 		AnalyticsEvent('Shared', 'Clicked');
 	};
 
+	const twitterText =
+		'https://twitter.com/share?ref_src=twsrc%5Etfw&text=' +
+		encodeURIComponent(
+			'This is how much a traveled! Check out this cool page to know yours: (Add screenshot)'
+		);
+
 	return (
 		<>
 			<BrowserView>
@@ -266,7 +272,7 @@ const Autocomplete = ({
 							</ButtonAdvancedResults>
 							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
 								<TwitterLink
-									href='https://twitter.com/share?ref_src=twsrc%5Etfw&text=Hello%20world!%20Check%20out%20this%20cool%20page:'
+									href={twitterText}
 									target='_blank'
 									className='twitter-share-button'
 									data-show-count='false'>
