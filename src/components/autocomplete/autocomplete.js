@@ -265,7 +265,7 @@ const Autocomplete = ({
 							</ButtonAdvancedResults>
 							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
 								<TwitterLink
-									href='https://twitter.com/share?ref_src=twsrc%5Etfw&text=Hello%20world'
+									href='https://twitter.com/share?ref_src=twsrc%5Etfw&text=Hello%20world!%20Check%20out%20this%20cool%20page:'
 									target='_blank'
 									className='twitter-share-button'
 									data-show-count='false'>
