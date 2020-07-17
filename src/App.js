@@ -15,6 +15,7 @@ import Loader from './components/loader/loader';
 import Toggle from './components/toggle/toggle';
 import Autocomplete from './components/autocomplete/autocomplete';
 import Information from './components/information/information';
+import InformationMap from './components/InformationMap/InformationMap';
 import Footer from './components/footer/footer';
 
 const Map = React.lazy(() => import('./components/map/map'));
@@ -167,12 +168,11 @@ function App() {
 					isSelected={isSelected}
 					handleTransition={handleTransition}
 				/>
-
-				<Information
+				{/* <Information
 					countryCode={countryCode}
 					results={results}
 					theme={theme}
-				/>
+				/> */}
 				<Suspense fallback={<Loader />}>
 					<Map
 						countryCode={countryCode}
@@ -180,6 +180,11 @@ function App() {
 						isSelected={isSelected}
 					/>
 				</Suspense>
+				<InformationMap
+					countryCode={countryCode}
+					results={results}
+					theme={theme}
+				/>
 				<Footer />
 			</HomeWrapper>
 		</ThemeProvider>

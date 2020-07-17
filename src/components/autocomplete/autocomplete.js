@@ -10,8 +10,8 @@ const AutocompleteBox = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding-top: 3em;
-	padding-bottom: 1em;
+	padding-top: 1.5em;
+	padding-bottom: 2em;
 `;
 
 const SearchIcon = styled(SearchLocation)`
@@ -54,15 +54,15 @@ const AutocompleteInput = styled.input`
 
 const AdvancedOptions = styled.div`
 	position: absolute;
-	right: -18em;
+	right: -27em;
 	top: 0.2em;
 	display: flex;
 	align-items: center;
 `;
 
 const ButtonAdvancedResults = styled.button`
-	margin: 0 1em;
-	width: 6em;
+	margin: 0 2em;
+	width: 8em;
 	border: ${(props) =>
 		props.theme === 'light'
 			? ' 1px solid palevioletred'

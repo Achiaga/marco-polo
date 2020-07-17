@@ -25,6 +25,8 @@ const mapsFunctions = (countryCode, handleClickCountry) => {
 		geographyConfig: {
 			highlightFillColor: '#f6bd60',
 			highlightBorderColor: '#f7ede2',
+			borderColor: '#363537',
+			borderWidth: 1,
 			popupTemplate: function (geo, data) {
 				if (isMobile) return null;
 				return [
