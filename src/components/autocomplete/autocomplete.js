@@ -178,6 +178,7 @@ const Autocomplete = ({
 			suggestionArray = Object.keys(newList).filter((word) =>
 				word.toLowerCase().includes(value.toLowerCase())
 			);
+			suggestionArray = suggestionArray.sort();
 			if (isMobile) {
 				suggestionArray = suggestionArray.slice(0, 3);
 			} else {
