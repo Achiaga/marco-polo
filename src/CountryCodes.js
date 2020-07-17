@@ -301,6 +301,7 @@ export const data = [
 		alpha3: 'gbr',
 	},
 	{ id: 840, name: 'United States of America', alpha2: 'us', alpha3: 'usa' },
+	{ id: 840, name: 'USA', alpha2: 'us', alpha3: 'usa' },
 	{
 		id: 581,
 		name: 'United States Minor Outlying Islands',
