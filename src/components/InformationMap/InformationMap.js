@@ -16,7 +16,8 @@ const InformationBox = styled.div`
 	width: 33%;
 	height: 3em;
 	text-align: center;
-	border-right: 1px solid white;
+	border-right: ${(props) =>
+		props.theme == 'dark' ? '1px solid white' : '1px solid palevioletred'};
 	display: grid;
 	justify-content: center;
 	align-items: center;
@@ -33,7 +34,8 @@ const InformationBoxMobile = styled.div`
 	width: 33%;
 	height: 3em;
 	text-align: center;
-	border-right: 1px solid white;
+	border-right: ${(props) =>
+		props.theme == 'dark' ? '1px solid white' : '1px solid palevioletred'};
 	display: grid;
 	justify-content: center;
 	align-items: center;
@@ -67,15 +69,15 @@ const InformationMap = ({ countryCode, results, theme }) => {
 		<>
 			<BrowserView>
 				<InformationMapWrapper theme={theme}>
-					<InformationBox>
+					<InformationBox theme={theme}>
 						<Text>{userCountrytraveled}</Text>
 						<Text>Countries</Text>
 					</InformationBox>
-					<InformationBox>
+					<InformationBox theme={theme}>
 						<Text>{explored}% </Text>
 						<Text>of the world explored</Text>
 					</InformationBox>
-					<InformationBox>
+					<InformationBox theme={theme}>
 						<Text>x{countryRate}</Text>
 						<Text>over average person</Text>
 					</InformationBox>
@@ -84,11 +86,11 @@ const InformationMap = ({ countryCode, results, theme }) => {
 			</BrowserView>
 			<MobileView>
 				<InformationMapWrapper theme={theme}>
-					<InformationBoxMobile>
+					<InformationBoxMobile theme={theme}>
 						<TextMobile>{userCountrytraveled}</TextMobile>
 						<TextMobile>Countries</TextMobile>
 					</InformationBoxMobile>
-					<InformationBoxMobile>
+					<InformationBoxMobile theme={theme}>
 						<TextMobile>{explored}% </TextMobile>
 						{isBrowser ? (
 							<TextMobile>of the world explored</TextMobile>
