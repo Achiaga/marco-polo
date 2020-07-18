@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { SearchLocation } from '@styled-icons/fa-solid';
 import { BrowserView, MobileView, isMobile } from 'react-device-detect';
+import jwt from 'jsonwebtoken';
+
 import { AnalyticsEvent } from '../../utils/analytics';
 
 import { AutocompleteList } from './AutocompleteList';
@@ -54,30 +56,29 @@ const AutocompleteInput = styled.input`
 
 const AdvancedOptions = styled.div`
 	position: absolute;
-	right: -27em;
+	right: -32em;
 	top: 0.2em;
 	display: flex;
 	align-items: center;
 `;
 
 const ButtonAdvancedResults = styled.button`
-	margin: 0 2em;
+	margin: 0 1em;
 	width: 8em;
-	border: ${(props) =>
-		props.theme === 'light'
-			? ' 1px solid palevioletred'
-			: ' 1px solid transparent'};
+	border: 1px solid palevioletred;
 	border-radius: 6px;
 	padding: 5px;
 	background-color: white;
-	color: palevioletred;
+	border-color: ${(props) => (props.copied ? 'green' : 'palevioletred')};
+	color: ${(props) => (props.copied ? 'green' : 'palevioletred')};
 	font-size: 15px;
 	font-weight: 500;
 	transition: all 0.2s ease-in-out;
+	outline: ${(props) => (props.copied ? 'none' : 'ne')};
 	&:hover {
 		transform: scale(1.1);
 		cursor: pointer;
-		border: 1px solid palevioletred;
+		border-color: ${(props) => (props.copied ? 'green' : 'palevioletred')};
 	}
 `;
 
@@ -133,7 +134,11 @@ const AdvancedOptionsMobile = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding-bottom: 1em;
+	padding-bottom: 3em;
+`;
+
+const ButtonAdvancedResultsMobile = styled(ButtonAdvancedResults)`
+	font-size: 13px;
 `;
 
 const Transition = styled.div`
@@ -158,11 +163,13 @@ const Autocomplete = ({
 	setResetMap,
 	handleTransition,
 	isSelected,
+	countryCode,
 }) => {
 	const [newList, setNewList] = useState(parseObject(countriesList));
 	const [inputValue, setInputValue] = useState('');
 	const [suggestionList, setSuggestionList] = useState([]);
 	const [navigationIndex, setNavigationIndex] = useState(0);
+	const [copied, setCopied] = useState(false);
 	const inputRef = useRef();
 
 	const handleInput = (e) => {
@@ -234,15 +241,27 @@ const Autocomplete = ({
 		setInputValue('');
 	};
 
-	const handleShare = () => {
-		AnalyticsEvent('Shared', 'Clicked');
-	};
-
+	const urlhash = jwt.sign({ country: countryCode }, 'marcopolo');
 	const twitterText =
-		'https://twitter.com/share?ref_src=twsrc%5Etfw&text=' +
+		`https://twitter.com/share?ref_src=twsrc%5Etfw&url=https://mytrips.now.sh?data=${urlhash}&text=` +
 		encodeURIComponent(
 			'This is how much a traveled! Check out this cool page to know yours: (Add screenshot)'
 		);
+
+	const handleShare = () => {
+		AnalyticsEvent('Shared', 'Clicked');
+		let UrlClipboard = `https://mytrips.now.sh?data=${urlhash}`;
+		console.log(UrlClipboard);
+		navigator.clipboard.writeText(UrlClipboard).then(
+			function () {
+				console.log('Async: Copying to clipboard was successful!');
+				setCopied(true);
+			},
+			function (err) {
+				console.error('Async: Could not copy text: ', err);
+			}
+		);
+	};
 
 	return (
 		<>
@@ -268,16 +287,23 @@ const Autocomplete = ({
 						</Transition>
 						<AdvancedOptions>
 							<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
-								Reset
+								New Map
 							</ButtonAdvancedResults>
-							<ButtonAdvancedResults theme={theme} onClick={handleShare}>
+							<ButtonAdvancedResults theme={theme}>
 								<TwitterLink
+									onClick={handleShare}
 									href={twitterText}
 									target='_blank'
 									className='twitter-share-button'
 									data-show-count='false'>
-									Share it
+									Tweet it
 								</TwitterLink>
+							</ButtonAdvancedResults>
+							<ButtonAdvancedResults
+								copied={copied}
+								theme={theme}
+								onClick={handleShare}>
+								{copied ? 'Copied!' : 'Clipboard URL'}
 							</ButtonAdvancedResults>
 						</AdvancedOptions>
 					</AutocompleteWrapper>
@@ -302,17 +328,24 @@ const Autocomplete = ({
 					/>
 				</AutocompleteWrapperMobile>
 				<AdvancedOptionsMobile>
-					<ButtonAdvancedResults theme={theme} onClick={setResetMap}>
-						Reset
-					</ButtonAdvancedResults>
-					<ButtonAdvancedResults theme={theme} onClick={handleShare}>
+					<ButtonAdvancedResultsMobile theme={theme} onClick={setResetMap}>
+						New Map
+					</ButtonAdvancedResultsMobile>
+					<ButtonAdvancedResultsMobile theme={theme} onClick={handleShare}>
 						<TwitterLink
-							href='https://twitter.com/share?ref_src=twsrc%5Etfw'
+							href={twitterText}
+							target='_blank'
 							className='twitter-share-button'
 							data-show-count='false'>
-							Share it
+							Tweet it
 						</TwitterLink>
-					</ButtonAdvancedResults>
+					</ButtonAdvancedResultsMobile>
+					<ButtonAdvancedResultsMobile
+						copied={copied}
+						theme={theme}
+						onClick={handleShare}>
+						{copied ? 'Copied!' : 'Clipboard URL'}
+					</ButtonAdvancedResultsMobile>
 				</AdvancedOptionsMobile>
 			</MobileView>
 		</>

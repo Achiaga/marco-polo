@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BrowserView, MobileView, isBrowser } from 'react-device-detect';
+import {
+	BrowserView,
+	MobileView,
+	isBrowser,
+	isMobile,
+} from 'react-device-detect';
 
 const InformationMapWrapper = styled.div`
 	width: 100%;
@@ -8,7 +13,8 @@ const InformationMapWrapper = styled.div`
 	justify-content: center;
 	align-items: center;
 	color: ${(props) => (props.theme === 'light' ? 'palevioletred' : 'white')};
-	margin-bottom: 3em;
+	margin-top: ${(props) => (props.isMobile ? '1em' : '0em')};
+	margin-bottom: 2em;
 	font-size: 26px;
 `;
 
@@ -85,7 +91,7 @@ const InformationMap = ({ countryCode, results, theme }) => {
 				</InformationMapWrapper>
 			</BrowserView>
 			<MobileView>
-				<InformationMapWrapper theme={theme}>
+				<InformationMapWrapper isMobile={isMobile} theme={theme}>
 					<InformationBoxMobile theme={theme}>
 						<TextMobile>{userCountrytraveled}</TextMobile>
 						<TextMobile>Countries</TextMobile>

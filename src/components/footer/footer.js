@@ -7,6 +7,7 @@ const CreditsWrapper = styled.div`
 	justify-content: center;
 	text-align: center;
 	margin-bottom: 1.5em;
+	margin-top: 5em;
 	color: palevioletred;
 `;
 const Credits = styled.span`

@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import jwt from 'jsonwebtoken';
 import { BrowserView, MobileView } from 'react-device-detect';
-import { AnimateSharedLayout, motion, AnimatePresence } from 'framer-motion';
 
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from './components/themes/globalStyles';
@@ -80,16 +80,29 @@ const Backdrop = styled.div`
 	bottom: 0;
 `;
 
+const getUrlData = (setCountryCode) => {
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	const token = urlParams.get('data');
+	if (!token) return;
+	var decoded = jwt.verify(token, 'marcopolo');
+	let name = decoded.country;
+	console.log({ name, decoded });
+	setCountryCode(name);
+};
+
 function App() {
 	const [countriesList, setCountriesList] = useState(parseListTobject(data));
 	const [countryCode, setCountryCode] = useState({});
 	const [results, setResults] = useState('0.0%');
 	const [theme, themeToggler] = useDarkMode();
 	const themeMode = theme === 'light' ? lightTheme : darkTheme;
-
 	const [isSelected, setSelected] = useState(false);
 
+	console.log({ countryCode });
+
 	useEffect(() => {
+		getUrlData(setCountryCode);
 		try {
 			InitializeAnalytics();
 		} catch (err) {
@@ -158,7 +171,7 @@ function App() {
 				</BrowserView>
 				{isSelected && <Backdrop onClick={handleBackdrop} />}
 				<Autocomplete
-					style={{ position: 'absolute' }}
+					countryCode={countryCode}
 					countriesList={countriesList}
 					setColorMap={setColorMap}
 					theme={theme}
