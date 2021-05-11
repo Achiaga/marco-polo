@@ -8,7 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "datamaps": "^0.5.9",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "react": "^16.13.1",
     "react-device-detect": "^1.13.1",
     "react-dom": "^16.13.1",
